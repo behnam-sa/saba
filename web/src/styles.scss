@@ -1,0 +1,25 @@
+@use '@angular/material' as mat;
+@use 'theme.scss' as theme;
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    font-size: 62.5%;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    font-size: 160%;
+    font-family: 'Vazirmatn', 'Helvetica Neue', sans-serif;
+}
+
+@include mat.core(theme.$theme);
+@include mat.all-component-themes(theme.$theme);
