@@ -27,10 +27,12 @@ jobs:
       run: npm ci
     - name: Test
       run: npm test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
-    - name: Add secrets
-      run: printf '${{ secrets.WEB_SECRET_FILE }}' > ./src/assets/config.json
+    - name: Add production config
+      run: cp ./src/assets/config.prod.json ./src/assets/config.json
     - name: Build
       run: npm run build
+    - name: Add 404 page
+      run: cp ./dist/saba/index.html ./dist/saba/404.html
     - name: Publish
       if: github.event_name == 'push'
       uses: peaceiris/actions-gh-pages@v3
