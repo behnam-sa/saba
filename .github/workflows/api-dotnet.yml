@@ -45,8 +45,6 @@ jobs:
       run: printf '${{ secrets.API_SECRET_FILE }}' > ./release/secrets.json
     - name: Install LFTP
       run: sudo apt install lftp
-    - name: Configure LFTP
-      run: mkdir ~/.lftp && echo "set ssl:verify-certificate false;" >> ~/.lftp/rc
-    - name: Deploy FTP
+    - name: FTP Deploy
       working-directory: api/release
       run: lftp -e "mirror --parallel=100 -R ./ /${{ secrets.API_FTP_PATH }}/" -u ${{ secrets.API_FTP_USERNAME }},${{ secrets.API_FTP_PASSWORD }} ${{ secrets.API_FTP_HOSTNAME }}
