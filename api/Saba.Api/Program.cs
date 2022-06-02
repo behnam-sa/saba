@@ -17,19 +17,13 @@ if (builder.Environment.IsProduction())
 
 // Add services to the container.
 builder.Services.Configure<AuthenticationConfig>(builder.Configuration.GetSection(nameof(AuthenticationConfig)));
+builder.Services.Configure<CorsConfig>(builder.Configuration.GetSection(nameof(CorsConfig)));
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<SabaDbContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-if (builder.Environment.IsDevelopment())
-{
-    builder.Services.AddCors(options =>
-    {
-        options.AddPolicy("CorsPolicy",
-            builder => builder.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader());
-    });
-}
+builder.Services.ConfigureCors("CorsPolicy");
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -46,9 +40,9 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.UseCors("CorsPolicy");
 }
 
+app.UseCors("CorsPolicy");
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
