@@ -29,7 +29,8 @@ jobs:
       run: dotnet test --no-build --verbosity normal
     - name: Publish
       run: dotnet publish -c Release --output ./release
-      
+    - name: Add secrets
+      run: printf '${{ secrets.API_SECRET_FILE }}' > ./release/secrets.json
     - name: Install LFTP
       run: sudo apt install lftp
     - name: Configure LFTP
