@@ -5,12 +5,15 @@ using Saba.Data.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Host.ConfigureAppConfiguration(configurationBuilder =>
+if (builder.Environment.IsProduction())
 {
-    configurationBuilder.AddJsonFile("secrets.json",
-        optional: false,
-        reloadOnChange: true);
-});
+    builder.Host.ConfigureAppConfiguration(configurationBuilder =>
+    {
+        configurationBuilder.AddJsonFile("secrets.json",
+            optional: false,
+            reloadOnChange: true);
+    });
+}
 
 // Add services to the container.
 builder.Services.Configure<AuthenticationConfig>(builder.Configuration.GetSection(nameof(AuthenticationConfig)));
