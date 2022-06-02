@@ -1,0 +1,82 @@
+<mat-card *ngIf="loaded | async">
+    <mat-card-header>
+        <div mat-card-avatar class="profile-photo-container">
+            <div *ngIf="avatar" [style.background-image]="'url(' + avatar + ')'" class="profile-photo"></div>
+            <mat-icon *ngIf="!avatar" class="profile-photo empty-profile-photo">account_circle</mat-icon>
+
+            <label for="avatar">
+                <a class="profile-photo-edit-button" mat-fab color="primary">
+                    <mat-icon>add_a_photo</mat-icon>
+                </a>
+            </label>
+            <input
+                (change)="avatarChanged($event)"
+                accept="image/png,image/jpeg"
+                id="avatar"
+                name="avatar"
+                type="file"
+                hidden
+            />
+        </div>
+        <mat-card-title> {{ (auth.user | async)?.name }} </mat-card-title>
+        <mat-card-subtitle>
+            <bdo dir="ltr">@{{ (auth.user | async)?.username }}</bdo>
+        </mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content class="outer-form-content">
+        <form [formGroup]="form" (ngSubmit)="submit()" class="form-content" [hidden]="!showForm" autocomplete="off">
+            <div class="form-fields" [class.show]="showForm">
+                <mat-form-field appearance="standard">
+                    <mat-label>نام کاربری</mat-label>
+                    <input type="text" matInput formControlName="username" required minlength="3" maxlength="32" />
+                    <mat-hint>حداقل ۳ کاراکتر</mat-hint>
+                </mat-form-field>
+
+                <mat-form-field appearance="standard">
+                    <mat-label>نام</mat-label>
+                    <input type="text" matInput formControlName="name" required maxlength="32" />
+                </mat-form-field>
+
+                <mat-form-field appearance="standard">
+                    <mat-label>ایمیل</mat-label>
+                    <input type="email" matInput formControlName="email" required maxlength="32" />
+                </mat-form-field>
+
+                <mat-form-field appearance="standard" floatLabel="always">
+                    <mat-label>گذرواژه جدید</mat-label>
+                    <input
+                        [type]="hidePassword ? 'password' : 'text'"
+                        matInput
+                        placeholder="بدون تغییر"
+                        formControlName="newPassword"
+                        autocomplete="new-password"
+                        minlength="6"
+                        maxlength="32"
+                    />
+                    <button type="button" mat-icon-button matSuffix (click)="hidePassword = !hidePassword">
+                        <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                    </button>
+                    <mat-hint>حداقل ۶ کاراکتر</mat-hint>
+                </mat-form-field>
+            </div>
+
+            <button type="submit" mat-raised-button color="primary">ثبت</button>
+        </form>
+
+        <div *ngIf="!showForm">
+            <p>
+                <span>ایمیل:</span>
+                <span> {{ (auth.user | async)?.email }}</span>
+            </p>
+            <p *ngIf="(auth.user | async)?.registraionDate">
+                <span>تاریخ عضویت:</span>
+                <span> {{ (auth.user | async)?.registraionDate?.toLocaleDateString('fa-Ir', dateTimeOptions) }}</span>
+            </p>
+
+            <button type="button" mat-raised-button color="primary" (click)="showForm = true">ویرایش</button>
+        </div>
+    </mat-card-content>
+    <mat-card-footer>
+        <mat-progress-bar *ngIf="sendingRequest" mode="indeterminate"></mat-progress-bar>
+    </mat-card-footer>
+</mat-card>
