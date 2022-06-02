@@ -27,6 +27,17 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
+  
+  publish:
+    defaults:
+      run:
+        working-directory: api
+    
+    needs: [ build ]
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+        
+    steps:
     - name: Publish
       run: dotnet publish -c Release --output ./release
     - name: Add secrets
