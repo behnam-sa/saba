@@ -1,0 +1,55 @@
+<mat-toolbar color="primary" style="justify-content: space-between">
+    <div class="header-row">
+        <a mat-button routerLink="/">
+            <span class="header-title">
+                <img src="/assets/logo.svg" alt="Saba logo" class="logo" />
+                سامانه برگزاری آزمون صبا
+            </span>
+        </a>
+        <ul *ngIf="loaded | async" class="header-row">
+            <li *ngIf="loggedIn | async">
+                <a mat-button routerLink="/course/mine">
+                    <mat-icon>school</mat-icon>
+                    دوره‌های من
+                </a>
+            </li>
+            <li>
+                <a mat-button routerLink="/course">
+                    <mat-icon>search</mat-icon>
+                    جستجو دوره‌ها
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div>
+        <ul class="header-row">
+            <ng-container [ngSwitch]="loggedIn | async">
+                <li *ngSwitchCase="false">
+                    <a mat-button routerLink="/account/login">
+                        <mat-icon>person</mat-icon>
+                        ورود
+                    </a>
+                </li>
+                <li *ngSwitchCase="false">
+                    <a mat-button routerLink="/account/register"> ثبت نام </a>
+                </li>
+                <li *ngSwitchCase="true">
+                    <button mat-button [matMenuTriggerFor]="menu">
+                        <mat-icon>account_circle</mat-icon>
+                        {{ (auth.user | async)?.name }}
+                    </button>
+                    <mat-menu #menu="matMenu">
+                        <button mat-menu-item routerLink="/account/profile">
+                            <mat-icon>manage_accounts</mat-icon>
+                            مدیریت حساب
+                        </button>
+                        <button mat-menu-item (click)="logout()">
+                            <mat-icon>exit_to_app</mat-icon>
+                            خروج
+                        </button>
+                    </mat-menu>
+                </li>
+            </ng-container>
+        </ul>
+    </div>
+</mat-toolbar>

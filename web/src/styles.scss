@@ -23,3 +23,16 @@ body {
 
 @include mat.core(theme.$theme);
 @include mat.all-component-themes(theme.$theme);
+
+.primary-snackbar {
+    background-color: theme.mat-color(theme.$primary-palette);
+    color: theme.mat-color(theme.$primary-palette, default-contrast);
+}
+.accent-snackbar {
+    background-color: theme.mat-color(theme.$accent-palette);
+    color: theme.mat-color(theme.$accent-palette, default-contrast);
+}
+.warn-snackbar {
+    background: theme.mat-color(theme.$warn-palette);
+    color: theme.mat-color(theme.$warn-palette, default-contrast);
+}

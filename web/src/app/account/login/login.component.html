@@ -1,0 +1,39 @@
+<mat-card>
+    <mat-card-title>
+        <div class="title">ورود به صبا</div>
+    </mat-card-title>
+    <mat-card-content class="outer-form-content">
+        <form [formGroup]="form" (ngSubmit)="submit()" class="form-content" autocomplete="on">
+            <div class="form-fields">
+                <mat-form-field appearance="standard">
+                    <mat-label>نام کاربری</mat-label>
+                    <input type="text" matInput formControlName="username" required autocomplete="username" />
+                </mat-form-field>
+
+                <mat-form-field appearance="standard">
+                    <mat-label>گذرواژه</mat-label>
+                    <input
+                        [type]="hidePassword ? 'password' : 'text'"
+                        matInput
+                        formControlName="password"
+                        required
+                        autocomplete="current-password"
+                    />
+                    <button type="button" mat-icon-button matSuffix (click)="hidePassword = !hidePassword">
+                        <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                    </button>
+                </mat-form-field>
+            </div>
+
+            <button type="submit" mat-raised-button color="primary">ورود</button>
+        </form>
+
+        <small>
+            هنوز عضو نشده‌اید؟
+            <a routerLink="/account/register">ثبت نام</a>
+        </small>
+    </mat-card-content>
+    <mat-card-footer>
+        <mat-progress-bar *ngIf="sendingRequest" mode="indeterminate"></mat-progress-bar>
+    </mat-card-footer>
+</mat-card>
