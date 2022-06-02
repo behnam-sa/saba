@@ -6,13 +6,13 @@ on:
   pull_request:
     branches: [ main ]
   workflow_dispatch:
+  
+defaults:
+  run:
+    working-directory: api
 
 jobs:
   build:
-    defaults:
-      run:
-        working-directory: api
-
     runs-on: ubuntu-latest
 
     steps:
@@ -29,10 +29,6 @@ jobs:
       run: dotnet test --no-build --verbosity normal
   
   publish:
-    defaults:
-      run:
-        working-directory: api
-    
     needs: [ build ]
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
