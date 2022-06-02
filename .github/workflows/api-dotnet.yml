@@ -9,15 +9,14 @@ on:
 
 jobs:
   build:
+    defaults:
+      run:
+        working-directory: api
 
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
-    - name: Go to api project directory
-      run: cd ./api
-    - name: List api project directory
-      run: ls
     - name: Setup .NET
       uses: actions/setup-dotnet@v2
       with:
