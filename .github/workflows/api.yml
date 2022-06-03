@@ -3,9 +3,19 @@ name: API CI/CD
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'api/**'
   pull_request:
     branches: [ main ]
+    paths:
+      - 'api/**'
   workflow_dispatch:
+    inputs:
+      publish:
+        type: boolean
+        required: true
+        default: true
+        description: Publish
   
 defaults:
   run:
@@ -30,7 +40,7 @@ jobs:
   
   publish:
     needs: [ build ]
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' || github.event.inputs.publish == 'true'
     runs-on: ubuntu-latest
         
     steps:
