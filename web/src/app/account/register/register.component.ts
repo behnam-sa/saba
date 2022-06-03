@@ -3,6 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { first } from 'rxjs';
+import { AuthService } from 'src/app/authentication/services/auth.service';
 import { AccountService } from '../services/account.service';
 
 @Component({
@@ -21,7 +23,12 @@ export class RegisterComponent implements OnInit {
     public hidePassword: boolean = true;
     public sendingRequest: boolean = false;
 
-    constructor(private accountService: AccountService, private router: Router, private snackBar: MatSnackBar) {}
+    constructor(
+        private accountService: AccountService,
+        private auth: AuthService,
+        private router: Router,
+        private snackBar: MatSnackBar
+    ) {}
 
     ngOnInit(): void {}
 
@@ -30,24 +37,36 @@ export class RegisterComponent implements OnInit {
             this.sendingRequest = true;
 
             this.accountService.register(this.form.value).subscribe({
-                next: () => {
-                    this.router.navigate(['/']);
-                    this.sendingRequest = false;
-                },
-                error: (error) => {
-                    if (error instanceof HttpErrorResponse) {
-                        const message = error.error?.message ?? 'خطا در برقراری ارتباط با سرور';
-                        this.snackBar.open(message, undefined, {
-                            duration: 3000,
-                            verticalPosition: 'bottom',
-                            horizontalPosition: 'center',
-                            panelClass: 'warn-snackbar',
-                        });
-                    }
-                    console.log(error);
-                    this.sendingRequest = false;
-                },
+                next: () => this.registerSucceeded(),
+                error: (error) => this.showError(error),
             });
         }
+    }
+
+    private registerSucceeded() {
+        this.snackBar.open('ثبت نام با موفقیت انجام شد', undefined, {
+            duration: 3000,
+            verticalPosition: 'bottom',
+            horizontalPosition: 'center',
+            panelClass: 'primary-snackbar',
+        });
+
+        this.auth.user.pipe(first((user) => user !== null)).subscribe(() => {
+            this.router.navigate(['/courses/mine']);
+            this.sendingRequest = false;
+        });
+    }
+
+    private showError(error: any) {
+        if (error instanceof HttpErrorResponse) {
+            const message = error.error?.message ?? 'خطا در برقراری ارتباط با سرور';
+            this.snackBar.open(message, undefined, {
+                duration: 3000,
+                verticalPosition: 'bottom',
+                horizontalPosition: 'center',
+                panelClass: 'warn-snackbar',
+            });
+        }
+        this.sendingRequest = false;
     }
 }
