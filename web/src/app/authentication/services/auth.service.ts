@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
-import { defer, map, Observable, ReplaySubject, Subscription, tap } from 'rxjs';
+import { defer, map, Observable, ReplaySubject, shareReplay, Subscription, tap } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
 import { UserInfo } from '../models/user-info';
 import { AuthTokenService } from './auth-token.service';
@@ -12,7 +12,7 @@ export class AuthService implements OnDestroy {
     public user: Observable<UserInfo | null> = defer(() => {
         this.getUser().subscribe();
         return this.userSource;
-    });
+    }).pipe(shareReplay(1));
 
     private subscriptions: Subscription[] = [];
 
