@@ -3,9 +3,19 @@ name: Web CI/CD
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'web/**'
   pull_request:
     branches: [ main ]
+    paths:
+      - 'web/**'
   workflow_dispatch:
+    inputs:
+      publish:
+        type: boolean
+        required: true
+        default: true
+        description: Publish
   
 defaults:
   run:
@@ -34,7 +44,7 @@ jobs:
     - name: Add 404 page
       run: cp ./dist/saba/index.html ./dist/saba/404.html
     - name: Publish
-      if: github.event_name == 'push'
+      if: github.event_name == 'push' || github.event.inputs.publish == 'true'
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
