@@ -5,16 +5,18 @@ on:
     branches: [ main ]
     paths:
       - 'api/**'
+      - '.github/workflows/api.yml'
   pull_request:
     branches: [ main ]
     paths:
       - 'api/**'
+      - '.github/workflows/api.yml'
   workflow_dispatch:
     inputs:
       publish:
         type: boolean
         required: true
-        default: true
+        default: false
         description: Publish
   
 defaults:
