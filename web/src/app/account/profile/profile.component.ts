@@ -103,7 +103,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
                             panelClass: 'warn-snackbar',
                         });
                     }
-                    console.log(error);
                     this.sendingRequest = false;
                 },
             });
