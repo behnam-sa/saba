@@ -52,7 +52,7 @@ export class RegisterComponent implements OnInit {
         });
 
         this.auth.user.pipe(first((user) => user !== null)).subscribe(() => {
-            this.router.navigate(['/courses/mine']);
+            this.router.navigate(['/course/mine']);
             this.sendingRequest = false;
         });
     }
