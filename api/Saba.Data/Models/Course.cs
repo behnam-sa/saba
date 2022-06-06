@@ -15,6 +15,6 @@ namespace Saba.Data.Models
         public virtual User Creator { get; set; }
 
         [ForeignKey(nameof(Creator))]
-        public string CretorId { get; set; }
+        public string CreatorId { get; set; }
     }
 }

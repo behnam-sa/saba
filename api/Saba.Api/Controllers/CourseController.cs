@@ -58,6 +58,12 @@ namespace Saba.Api.Controllers
                 return NotFound();
             }
 
+            if (course.CreatorId != User.Identity!.Name)
+            {
+                return Forbid();
+            }
+
+
             course.Name = editInfo.Name;
             course.Description = editInfo.Description;
 
