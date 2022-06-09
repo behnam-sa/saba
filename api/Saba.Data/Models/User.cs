@@ -8,7 +8,7 @@ namespace Saba.Data.Models
         public string DisplayName { get; set; } = string.Empty;
 
         [PersonalData]
-        public DateTime? RegistraionDate { get; set; }
+        public DateTime? RegistrationDate { get; set; }
 
         [PersonalData]
         public string? Avatar { get; set; }

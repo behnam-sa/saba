@@ -19,13 +19,23 @@ namespace Saba.Api.Controllers
 
         // GET: api/Course
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Course>>> GetCourse()
+        public async Task<ActionResult<IEnumerable<CourseInfo>>> GetCourse()
         {
             if (_context.Courses == null)
             {
                 return NotFound();
             }
-            return await _context.Courses.ToListAsync();
+
+            var courseInfos = _context.Courses.Select(course => new CourseInfo
+            {
+                Id = course.Id,
+                Name = course.Name,
+                Description = course.Description,
+                CreationDate = course.CreationDate,
+                CreatorName = course.Creator.DisplayName,
+            });
+
+            return await courseInfos.ToListAsync();
         }
 
         // GET: api/Course/5
