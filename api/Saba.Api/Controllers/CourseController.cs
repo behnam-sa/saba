@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Saba.Api.Models.Course;
 using Saba.Data.Models;
@@ -19,7 +20,7 @@ namespace Saba.Api.Controllers
 
         // GET: api/Course
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CourseInfo>>> GetCourse()
+        public async Task<ActionResult<IEnumerable<CourseInfo>>> GetAllCourses()
         {
             var courseInfos = _context
                 .Courses
@@ -35,22 +36,54 @@ namespace Saba.Api.Controllers
             return await courseInfos.ToListAsync();
         }
 
+        [HttpGet("created")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<CourseInfo>>> GetCreatedCourses()
+        {
+            if (User.Identity?.Name is null)
+            {
+                return Forbid();
+            }
+
+            var courseInfos = _context
+                .Courses
+                .Where(c => c.CreatorId == User.Identity.Name)
+                .Select(course => new CourseInfo
+                {
+                    Id = course.Id,
+                    Name = course.Name,
+                    Description = course.Description,
+                    CreationDate = course.CreationDate,
+                    CreatorName = course.Creator.DisplayName,
+                });
+
+            return await courseInfos.ToListAsync();
+        }
+
         // GET: api/Course/5
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<Course>> GetCourse(int id)
+        public async Task<ActionResult<CourseDetails>> GetCourse(int id)
         {
-            var course = await _context.Courses.FindAsync(id);
+            var course = await _context.Courses.Include(course => course.Creator).SingleOrDefaultAsync(course => course.Id == id);
 
             if (course is null)
             {
                 return NotFound();
             }
 
-            return course;
+            return new CourseDetails
+            {
+                Id = id,
+                Name = course.Name,
+                Description = course.Description,
+                CreationDate = course.CreationDate,
+                CreatorName = course.Creator.DisplayName,
+            };
         }
 
         // PUT: api/Course/5
         [HttpPut("{id:int}")]
+        [Authorize]
         public async Task<IActionResult> PutCourse([FromRoute] int id, [FromBody] CourseInfoEdit editInfo)
         {
             var course = await _context.Courses.FindAsync(id);
@@ -89,32 +122,62 @@ namespace Saba.Api.Controllers
         }
 
         // POST: api/Course
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Course>> PostCourse(Course course)
+        [Authorize]
+        public async Task<ActionResult<CourseInfo>> PostCourse(CourseInfoCreate courseInfoCreate)
         {
             if (User.Identity?.Name is null)
             {
                 return Forbid();
             }
-
-            course.CreationDate = DateTime.UtcNow;
-            course.CreatorId = User.Identity.Name;
+            var course = new Course()
+            {
+                Name = courseInfoCreate.Name,
+                Description = courseInfoCreate.Description,
+                CreationDate = DateTime.Now,
+                CreatorId = User.Identity.Name
+            };
 
             _context.Courses.Add(course);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCourse", new {id = course.Id}, course);
+            var addedCourse = await _context
+                .Courses
+                .Include(item => item.Creator)
+                .SingleAsync(item => course.Id == item.Id);
+
+            if (addedCourse == null)
+            {
+                return NotFound();
+            }
+
+            var courseInfo = new CourseInfo()
+            {
+                Id = course.Id,
+                Name = addedCourse.Name,
+                Description = addedCourse.Description,
+                CreationDate = addedCourse.CreationDate,
+                CreatorName = addedCourse.Creator.DisplayName
+            };
+
+            return CreatedAtAction("GetCourse", new { id = course.Id }, courseInfo);
         }
 
         // DELETE: api/Course/5
         [HttpDelete("{id:int}")]
+        [Authorize]
         public async Task<IActionResult> DeleteCourse(int id)
         {
             var course = await _context.Courses.FindAsync(id);
+
             if (course is null)
             {
                 return NotFound();
+            }
+
+            if (User.Identity is null || course.CreatorId != User.Identity.Name)
+            {
+                return Forbid();
             }
 
             _context.Courses.Remove(course);
