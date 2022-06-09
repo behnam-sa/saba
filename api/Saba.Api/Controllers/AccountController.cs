@@ -42,8 +42,8 @@ namespace Saba.Api.Controllers
                 Username = user.UserName,
                 Email = user.Email,
                 Avatar = user.Avatar is null ? null : user.Avatar,
-                RegistraionDate = user.RegistraionDate,
-            }); ;
+                RegistraionDate = user.RegistrationDate,
+            });
         }
 
         [AllowAnonymous]
@@ -70,7 +70,7 @@ namespace Saba.Api.Controllers
                 DisplayName = model.Name!,
                 Email = model.Email,
                 UserName = model.Username,
-                RegistraionDate = DateTime.Now,
+                RegistrationDate = DateTime.Now,
             };
             var creationResult = await userManager.CreateAsync(user, model.Password);
             if (!creationResult.Succeeded)

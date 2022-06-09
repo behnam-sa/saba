@@ -13,5 +13,7 @@ namespace Saba.Data.Persistence
         {
 
         }
+
+        public virtual DbSet<Course> Courses { get; set; } = null!;
     }
 }
