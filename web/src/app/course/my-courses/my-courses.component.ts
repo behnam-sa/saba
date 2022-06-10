@@ -16,15 +16,23 @@ import { CourseService } from '../services/course.service';
     styleUrls: ['./my-courses.component.scss'],
 })
 export class MyCoursesComponent implements OnInit, AfterViewInit, OnDestroy {
-    public displayedColumns: (keyof CourseInfo | 'actions')[] = ['name', 'creationDate', 'actions'];
-    public dataSource: MatTableDataSource<CourseInfo> = new MatTableDataSource<CourseInfo>();
+    public attendedDisplayedColumns: (keyof CourseInfo)[] = ['name', 'creatorName', 'creationDate'];
+    public createdDisplayedColumns: (keyof CourseInfo | 'actions')[] = ['name', 'creationDate', 'actions'];
+    public attendedDataSource: MatTableDataSource<CourseInfo> = new MatTableDataSource<CourseInfo>();
+    public createdDataSource: MatTableDataSource<CourseInfo> = new MatTableDataSource<CourseInfo>();
     public loading: boolean = true;
 
-    @ViewChild('paginator')
-    public paginator?: MatPaginator;
+    @ViewChild('attendedPaginator')
+    public attendedPaginator?: MatPaginator;
 
-    @ViewChild('sort')
-    public sort?: MatSort;
+    @ViewChild('createdPaginator')
+    public createdPaginator?: MatPaginator;
+
+    @ViewChild('attendedSort')
+    public attendedSort?: MatSort;
+
+    @ViewChild('createdSort')
+    public createdSort?: MatSort;
 
     public dateTimeOptions: Intl.DateTimeFormatOptions = {
         year: 'numeric',
@@ -38,12 +46,16 @@ export class MyCoursesComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngOnInit(): void {
         this.loadData();
-        this.dataSource.filterPredicate = (data, filter) => this.filterPredicate(data, filter);
+        this.attendedDataSource.filterPredicate = (data, filter) => this.filterPredicate(data, filter);
+        this.createdDataSource.filterPredicate = (data, filter) => this.filterPredicate(data, filter, false);
     }
 
     ngAfterViewInit() {
-        this.dataSource.paginator = this.paginator ?? null;
-        this.dataSource.sort = this.sort ?? null;
+        this.attendedDataSource.paginator = this.attendedPaginator ?? null;
+        this.attendedDataSource.sort = this.attendedSort ?? null;
+
+        this.createdDataSource.paginator = this.createdPaginator ?? null;
+        this.createdDataSource.sort = this.createdSort ?? null;
     }
 
     ngOnDestroy(): void {
@@ -52,18 +64,26 @@ export class MyCoursesComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private loadData() {
         this.subscriptions.push(
+            this.courseService.getAttendedCourses().subscribe((courses) => {
+                this.attendedDataSource.data = courses;
+                this.loading = false;
+            }),
             this.courseService.getCreatedCourses().subscribe((courses) => {
-                this.dataSource.data = courses;
+                this.createdDataSource.data = courses;
                 this.loading = false;
             })
         );
     }
 
     public applyFilter(filterValue: string) {
-        this.dataSource.filter = filterValue.trim().toLowerCase();
+        this.attendedDataSource.filter = filterValue.trim().toLowerCase();
+        if (this.attendedDataSource.paginator) {
+            this.attendedDataSource.paginator.firstPage();
+        }
 
-        if (this.dataSource.paginator) {
-            this.dataSource.paginator.firstPage();
+        this.createdDataSource.filter = filterValue.trim().toLowerCase();
+        if (this.createdDataSource.paginator) {
+            this.createdDataSource.paginator.firstPage();
         }
     }
 
@@ -95,11 +115,11 @@ export class MyCoursesComponent implements OnInit, AfterViewInit, OnDestroy {
         });
     }
 
-    private filterPredicate(data: CourseInfo, filter: string): boolean {
+    private filterPredicate(data: CourseInfo, filter: string, includeCreatorName: boolean = true): boolean {
         return (
             data.name.includes(filter) ||
             data.description.includes(filter) ||
-            data.creatorName.includes(filter) ||
+            (includeCreatorName && data.creatorName.includes(filter)) ||
             data.creationDate.toLocaleDateString('fa-Ir', this.dateTimeOptions).includes(filter)
         );
     }

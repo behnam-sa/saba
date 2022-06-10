@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Saba.Data.Models
 {
@@ -12,11 +7,12 @@ namespace Saba.Data.Models
         [ForeignKey(nameof(Course))]
         public int CourseId { get; set; }
 
-        [ForeignKey(nameof(User))]
-        public string UserId { get; set; }
+        [ForeignKey(nameof(Attendee))]
+        public string AttendeeId { get; set; }
 
         public Course Course { get; set; }
-        public User User { get; set; }
+
+        public User Attendee { get; set; }
 
         public DateTime AttendanceDate { get; set; }
     }

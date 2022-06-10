@@ -16,13 +16,19 @@ namespace Saba.Data.Persistence
 
         public virtual DbSet<Course> Courses { get; set; } = null!;
 
+        public virtual DbSet<Attendance> Attendances { get; set; } = null!;
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
             builder
                 .Entity<Attendance>(builder =>
                 {
-                    builder.HasKey(x => new { x.UserId, x.CourseId });
+                    builder.HasKey(a => new { a.AttendeeId, a.CourseId });
+
+                    builder.HasOne(a => a.Course)
+                        .WithMany(c => c.Attendances)
+                        .OnDelete(DeleteBehavior.ClientCascade);
                 });
         }
     }

@@ -10,3 +10,24 @@
     align-items: center;
     justify-items: center;
 }
+
+.header-attend {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: theme.$density-large;
+}
+
+.not-found {
+    display: flex;
+    align-items: center;
+    gap: theme.$density-normal;
+}
+
+.warn-text {
+    color: theme.mat-color(theme.$warn-palette, text);
+
+    > .mat-icon {
+        color: theme.mat-color(theme.$warn-palette);
+    }
+}

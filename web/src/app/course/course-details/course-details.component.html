@@ -3,10 +3,54 @@
 </div>
 
 <div *ngIf="!loading && !course">
-    <h3 *ngIf="!course">دوره یافت نشد!</h3>
+    <h2 *ngIf="!course" class="not-found warn-text">
+        <mat-icon>info</mat-icon>
+        دوره یافت نشد!
+    </h2>
 </div>
 
 <div *ngIf="!loading && course">
-    <p class="mat-display-2">{{ course.name }}</p>
+    <div class="header-attend">
+        <p class="mat-display-2">{{ course.name }}</p>
+
+        <div *ngIf="!changingAttendance">
+            <button *ngIf="!course.isAttended" mat-raised-button color="primary" (click)="attend()">
+                <mat-icon>playlist_add</mat-icon>
+                ثبت نام
+            </button>
+
+            <button *ngIf="course.isAttended" mat-button color="accent" disabled>
+                <mat-icon>playlist_add_check</mat-icon>
+                در حال گذراندن دوره
+            </button>
+
+            <button *ngIf="course.isAttended || course.isOwner" mat-icon-button [matMenuTriggerFor]="courseMenu">
+                <mat-icon>more_vert</mat-icon>
+            </button>
+
+            <mat-menu #courseMenu="matMenu">
+                <button *ngIf="course.isAttended" mat-menu-item class="warn-text" (click)="unattend()">
+                    <mat-icon>playlist_remove</mat-icon>
+                    انصراف از دوره
+                </button>
+                <button *ngIf="course.isOwner" mat-menu-item class="warn-text" (click)="delete()">
+                    <mat-icon>delete</mat-icon>
+                    حذف
+                </button>
+            </mat-menu>
+        </div>
+
+        <div *ngIf="changingAttendance">
+            <button *ngIf="!course.isAttended" mat-raised-button disabled>
+                <mat-icon>playlist_add</mat-icon>
+                در حال ثبت نام
+            </button>
+            <button *ngIf="course.isAttended" mat-raised-button disabled>
+                <mat-icon>playlist_remove</mat-icon>
+                در حال انصراف
+            </button>
+        </div>
+    </div>
+
     <p>{{ course.description }}</p>
 </div>

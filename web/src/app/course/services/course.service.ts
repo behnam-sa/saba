@@ -22,6 +22,12 @@ export class CourseService {
             .pipe(map((data) => data.map((course) => this.parseCourseInfo(course))));
     }
 
+    public getAttendedCourses(): Observable<CourseInfo[]> {
+        return this.api
+            .get<CourseInfo[]>('course/attended')
+            .pipe(map((data) => data.map((course) => this.parseCourseInfo(course))));
+    }
+
     public getCourse(id: number): Observable<CourseDetails> {
         return this.api.get<CourseDetails>(`course/${id}`).pipe(map((course) => this.parseCourseDetails(course)));
     }
@@ -38,14 +44,22 @@ export class CourseService {
         return this.api.delete<void>(`course/${id}`);
     }
 
-    private parseCourseInfo(data: CourseInfo): CourseInfo {
+    public attendCourse(id: number): Observable<void> {
+        return this.api.post<void>(`course/attend/${id}`);
+    }
+
+    public unattendCourse(id: number): Observable<void> {
+        return this.api.post<void>(`course/unattend/${id}`);
+    }
+
+    private parseCourseInfo<T extends CourseInfo>(data: T): T {
         return {
             ...data,
             creationDate: new Date(data.creationDate),
         };
     }
 
-    private parseCourseDetails(data: CourseInfo): CourseInfo {
+    private parseCourseDetails(data: CourseDetails): CourseDetails {
         return this.parseCourseInfo(data);
     }
 }

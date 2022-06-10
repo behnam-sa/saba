@@ -13,7 +13,15 @@ describe('MyCoursesComponent', () => {
         await TestBed.configureTestingModule({
             declarations: [MyCoursesComponent],
             imports: [MatDialogModule, MatSortModule],
-            providers: [{ provide: CourseService, useValue: { getCreatedCourses: () => of([]) } }],
+            providers: [
+                {
+                    provide: CourseService,
+                    useValue: {
+                        getAttendedCourses: () => of([]),
+                        getCreatedCourses: () => of([]),
+                    },
+                },
+            ],
         }).compileComponents();
     });
 
