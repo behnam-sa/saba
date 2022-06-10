@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Saba.Data.Persistence;
 
@@ -11,9 +12,10 @@ using Saba.Data.Persistence;
 namespace Saba.Data.Persistence.Migrations
 {
     [DbContext(typeof(SabaDbContext))]
-    partial class SabaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220610091842_RenameAttendance")]
+    partial class RenameAttendance
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -308,7 +310,7 @@ namespace Saba.Data.Persistence.Migrations
                     b.Property<int>("CourseId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("AttendanceDate")
+                    b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
                     b.HasKey("UserId", "CourseId");
@@ -479,13 +481,13 @@ namespace Saba.Data.Persistence.Migrations
                     b.HasOne("Saba.Data.Models.Course", "Course")
                         .WithMany("Attendances")
                         .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Saba.Data.Models.User", "User")
                         .WithMany("Attendances")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Course");
