@@ -14,6 +14,6 @@ namespace Saba.Data.Models
         public string? Avatar { get; set; }
 
         [PersonalData]
-        public ICollection<CourseUser> CourseUsers { get; set; }
+        public ICollection<Attendance> Attendances { get; set; }
     }
 }

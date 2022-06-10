@@ -17,6 +17,6 @@ namespace Saba.Data.Models
         [ForeignKey(nameof(Creator))]
         public string CreatorId { get; set; }
 
-        public ICollection<CourseUser> CourseUsers { get; set; }
+        public ICollection<Attendance> Attendances { get; set; }
     }
 }

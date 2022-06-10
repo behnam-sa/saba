@@ -72,7 +72,7 @@ namespace Saba.Api.Controllers
             var course = await _context
                 .Courses
                 .Include(course => course.Creator)
-                .Include(course => course.CourseUsers)
+                .Include(course => course.Attendances)
                 .SingleOrDefaultAsync(course => course.Id == id);
 
             if (course is null)
@@ -87,7 +87,7 @@ namespace Saba.Api.Controllers
                 Description = course.Description,
                 CreationDate = course.CreationDate,
                 CreatorName = course.Creator.DisplayName,
-                IsAttended = course.CourseUsers.Any(x => x.UserId == User.Identity.Name),
+                IsAttended = course.Attendances.Any(x => x.UserId == User.Identity.Name),
             };
         }
 
@@ -207,7 +207,7 @@ namespace Saba.Api.Controllers
 
             var course = await _context
                 .Courses
-                .Include(x => x.CourseUsers)
+                .Include(x => x.Attendances)
                 .SingleOrDefaultAsync(x => x.Id == id);
 
             if (course is null)
@@ -215,13 +215,13 @@ namespace Saba.Api.Controllers
                 return NotFound();
             }
 
-            if (course.CourseUsers.Any(x => x.UserId == User.Identity.Name))
+            if (course.Attendances.Any(x => x.UserId == User.Identity.Name))
             {
                 return BadRequest();
             }
 
-            var courseUser = new CourseUser() { UserId = User.Identity.Name, CourseId = id };
-            course.CourseUsers.Add(courseUser);
+            var attendance = new Attendance() { UserId = User.Identity.Name, CourseId = id };
+            course.Attendances.Add(attendance);
             await _context.SaveChangesAsync();
 
             return Ok();
@@ -238,7 +238,7 @@ namespace Saba.Api.Controllers
 
             var course = await _context
                 .Courses
-                .Include(x => x.CourseUsers)
+                .Include(x => x.Attendances)
                 .SingleOrDefaultAsync(x => x.Id == id);
 
             if (course is null)
@@ -246,7 +246,7 @@ namespace Saba.Api.Controllers
                 return NotFound();
             }
 
-            var relatedRelations = course.CourseUsers.Where(x => x.UserId == User.Identity.Name).ToList();
+            var relatedRelations = course.Attendances.Where(x => x.UserId == User.Identity.Name).ToList();
             if (relatedRelations.Count != 1)
             {
                 return BadRequest();

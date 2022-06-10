@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Saba.Data.Models
 {
-    public class CourseUser
+    public class Attendance
     {
         [ForeignKey(nameof(Course))]
         public int CourseId { get; set; }
