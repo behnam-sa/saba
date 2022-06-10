@@ -4,63 +4,110 @@
 
 <div [hidden]="loading">
     <div class="header-search">
-        <h1>دوره‌های ایجاد شده</h1>
+        <h1>دوره‌های ثبت نام شده</h1>
 
         <mat-form-field appearance="outline">
             <mat-label>جستجو</mat-label>
-            <input matInput [ngModel]="dataSource.filter" (ngModelChange)="applyFilter($event)" #filterInput />
+            <input matInput [ngModel]="''" (ngModelChange)="applyFilter($event)" #filterInput />
             <button type="button" mat-icon-button matSuffix (click)="applyFilter(filterInput.value)">
                 <mat-icon>search</mat-icon>
             </button>
         </mat-form-field>
     </div>
 
-    <mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort #sort="matSort">
-        <ng-container matColumnDef="name">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>دوره</mat-header-cell>
-            <mat-cell *matCellDef="let element">
-                <div class="name-description">
-                    <div class="mat-body-strong">{{ element.name }}</div>
-                    <div class="mat-caption">{{ element.description }}</div>
-                </div>
-            </mat-cell>
-        </ng-container>
+    <div class="mat-elevation-z2">
+        <mat-table [dataSource]="attendedDataSource" matSort #attendedSort="matSort">
+            <ng-container matColumnDef="name">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>دوره</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <div class="name-description">
+                        <div class="mat-body-strong">{{ element.name }}</div>
+                        <div class="mat-caption">{{ element.description }}</div>
+                    </div>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="creatorName">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>استاد</mat-header-cell>
+                <mat-cell *matCellDef="let element">{{ element.creatorName }}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="creationDate">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>تاریخ شروع</mat-header-cell>
+                <mat-cell *matCellDef="let element">{{
+                    element.creationDate.toLocaleDateString('fa-Ir', dateTimeOptions)
+                }}</mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="attendedDisplayedColumns"></mat-header-row>
+            <a
+                *matRowDef="let row; columns: attendedDisplayedColumns"
+                [routerLink]="['/course', row.id]"
+                class="row-link"
+            >
+                <mat-row matRipple></mat-row>
+            </a>
+            <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell" *ngIf="!filterInput.value">شما در هیچ دوره‌ای ثبت نام نکرده‌اید.</td>
+                <td class="mat-cell" *ngIf="filterInput.value">دوره‌ی مرتبطی با «{{ filterInput.value }}» یافت نشد.</td>
+            </tr>
+        </mat-table>
 
-        <ng-container matColumnDef="creationDate">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>تاریخ شروع</mat-header-cell>
-            <mat-cell *matCellDef="let element">{{
-                element.creationDate.toLocaleDateString('fa-Ir', dateTimeOptions)
-            }}</mat-cell>
-        </ng-container>
+        <mat-paginator
+            *ngIf="attendedDataSource.data.length > 10"
+            [pageSizeOptions]="[10, 25, 100]"
+            #attendedPaginator
+        ></mat-paginator>
+    </div>
 
-        <ng-container matColumnDef="actions">
-            <mat-header-cell *matHeaderCellDef>
-                <button mat-flat-button color="primary" (click)="createCourse()">
-                    <mat-icon>add</mat-icon>
-                    دوره جدید
-                </button>
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element">
-                <a mat-icon-button color="primary" [routerLink]="['/course', element.id]">
-                    <mat-icon>settings</mat-icon>
-                </a>
-                <button mat-icon-button color="primary" (click)="editCourse(element)">
-                    <mat-icon>edit</mat-icon>
-                </button>
-                <button mat-icon-button color="warn" (click)="deleteCourse(element)">
-                    <mat-icon>delete</mat-icon>
-                </button>
-            </mat-cell>
-        </ng-container>
+    <br />
+    <h1>دوره‌های ایجاد شده</h1>
 
-        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+    <div class="mat-elevation-z2">
+        <mat-table [dataSource]="createdDataSource" matSort #createdSort="matSort">
+            <ng-container matColumnDef="name">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>دوره</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <div class="name-description">
+                        <div class="mat-body-strong">{{ element.name }}</div>
+                        <div class="mat-caption">{{ element.description }}</div>
+                    </div>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="creationDate">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>تاریخ شروع</mat-header-cell>
+                <mat-cell *matCellDef="let element">{{
+                    element.creationDate.toLocaleDateString('fa-Ir', dateTimeOptions)
+                }}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef>
+                    <button mat-flat-button color="primary" (click)="createCourse()">
+                        <mat-icon>add</mat-icon>
+                        دوره جدید
+                    </button>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <a mat-icon-button color="primary" [routerLink]="['/course', element.id]">
+                        <mat-icon>settings</mat-icon>
+                    </a>
+                    <button mat-icon-button color="primary" (click)="editCourse(element)">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                    <button mat-icon-button color="warn" (click)="deleteCourse(element)">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="createdDisplayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: createdDisplayedColumns"></mat-row>
+            <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell" *ngIf="!filterInput.value">شما هیچ دوره‌ای ایجاد نکرده‌اید.</td>
+                <td class="mat-cell" *ngIf="filterInput.value">دوره‌ی مرتبطی با «{{ filterInput.value }}» یافت نشد.</td>
+            </tr>
+        </mat-table>
 
-        <tr class="mat-row" *matNoDataRow>
-            <td class="mat-cell" *ngIf="!filterInput.value">در حال حاضر هیچ دوره‌ای وجود ندارد.</td>
-            <td class="mat-cell" *ngIf="filterInput.value">دوره‌ی مرتبطی با «{{ filterInput.value }}» یافت نشد.</td>
-        </tr>
-
-        <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" #paginator></mat-paginator>
-    </mat-table>
+        <mat-paginator
+            *ngIf="createdDataSource.data.length > 10"
+            [pageSizeOptions]="[10, 25, 100]"
+            #createdPaginator
+        ></mat-paginator>
+    </div>
 </div>
