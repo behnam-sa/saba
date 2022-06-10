@@ -1,0 +1,6 @@
+@use './../../theme' as theme;
+
+:host {
+    display: grid;
+    padding: theme.$density-large;
+}

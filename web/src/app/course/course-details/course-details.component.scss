@@ -1,0 +1,12 @@
+@use '../../../theme' as theme;
+
+:host {
+    display: grid;
+    padding: theme.$density-normal;
+}
+
+.spinner-container {
+    display: grid;
+    align-items: center;
+    justify-items: center;
+}

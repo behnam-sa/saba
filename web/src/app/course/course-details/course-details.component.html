@@ -1,0 +1,12 @@
+<div *ngIf="loading" class="spinner-container">
+    <mat-spinner></mat-spinner>
+</div>
+
+<div *ngIf="!loading && !course">
+    <h3 *ngIf="!course">دوره یافت نشد!</h3>
+</div>
+
+<div *ngIf="!loading && course">
+    <p class="mat-display-2">{{ course.name }}</p>
+    <p>{{ course.description }}</p>
+</div>

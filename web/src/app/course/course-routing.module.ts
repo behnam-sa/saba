@@ -1,19 +1,24 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AccountComponent } from '../account/account.component';
 import { AuthorizeGuard } from '../authentication/guards/authorize.guard';
+import { CourseDetailsComponent } from './course-details/course-details.component';
 import { CourseListComponent } from './course-list/course-list.component';
+import { CourseComponent } from './course.component';
 import { MyCoursesComponent } from './my-courses/my-courses.component';
 
 const routes: Routes = [
     {
         path: '',
-        component: AccountComponent,
+        component: CourseComponent,
         children: [
             {
                 path: 'mine',
                 canActivate: [AuthorizeGuard],
                 component: MyCoursesComponent,
+            },
+            {
+                path: ':id',
+                component: CourseDetailsComponent,
             },
             {
                 path: '',
