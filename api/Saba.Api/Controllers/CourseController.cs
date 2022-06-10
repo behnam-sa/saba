@@ -196,7 +196,7 @@ namespace Saba.Api.Controllers
             return Ok();
         }
 
-        [HttpGet("attend/{id:int}")]
+        [HttpPost("attend/{id:int}")]
         [Authorize]
         public async Task<IActionResult> Attend(int id)
         {
@@ -220,14 +220,20 @@ namespace Saba.Api.Controllers
                 return BadRequest();
             }
 
-            var attendance = new Attendance() { UserId = User.Identity.Name, CourseId = id };
+            var attendance = new Attendance()
+            {
+                UserId = User.Identity.Name,
+                CourseId = id,
+                AttendanceDate = DateTime.Now
+            };
+
             course.Attendances.Add(attendance);
             await _context.SaveChangesAsync();
 
-            return Ok();
+            return NoContent();
         }
 
-        [HttpGet("unattend/{id:int}")]
+        [HttpPost("unattend/{id:int}")]
         [Authorize]
         public async Task<IActionResult> UnAttend(int id)
         {
@@ -256,7 +262,7 @@ namespace Saba.Api.Controllers
             _context.Entry(courseUser).State = EntityState.Deleted;
             await _context.SaveChangesAsync();
 
-            return Ok();
+            return NoContent();
         }
 
         private bool CourseExists(int id)

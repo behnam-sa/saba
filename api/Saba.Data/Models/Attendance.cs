@@ -17,7 +17,7 @@ namespace Saba.Data.Models
 
         public Course Course { get; set; }
         public User User { get; set; }
-        
-        public DateTime Created { get; set; }
+
+        public DateTime AttendanceDate { get; set; }
     }
 }
