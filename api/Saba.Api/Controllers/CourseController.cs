@@ -64,10 +64,7 @@ namespace Saba.Api.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult<CourseDetails>> GetCourse(int id)
         {
-            if (User.Identity?.Name is null)
-            {
-                return Forbid();
-            }
+            var isLoggedIn = User.Identity?.Name is not null;
 
             var course = await _context
                 .Courses
@@ -80,6 +77,8 @@ namespace Saba.Api.Controllers
                 return NotFound();
             }
 
+            var isAttended = isLoggedIn && course.Attendances.Any(x => x.UserId == User.Identity?.Name);
+
             return new CourseDetails
             {
                 Id = id,
@@ -87,7 +86,7 @@ namespace Saba.Api.Controllers
                 Description = course.Description,
                 CreationDate = course.CreationDate,
                 CreatorName = course.Creator.DisplayName,
-                IsAttended = course.Attendances.Any(x => x.UserId == User.Identity.Name),
+                IsAttended = isAttended,
             };
         }
 
