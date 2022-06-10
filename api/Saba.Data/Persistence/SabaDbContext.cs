@@ -22,7 +22,11 @@ namespace Saba.Data.Persistence
             builder
                 .Entity<Attendance>(builder =>
                 {
-                    builder.HasKey(x => new { x.UserId, x.CourseId });
+                    builder.HasKey(a => new { a.UserId, a.CourseId });
+
+                    builder.HasOne(a => a.Course)
+                        .WithMany(c => c.Attendances)
+                        .OnDelete(DeleteBehavior.NoAction);
                 });
         }
     }
