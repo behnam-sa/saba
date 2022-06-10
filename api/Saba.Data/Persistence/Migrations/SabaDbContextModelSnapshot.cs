@@ -105,7 +105,7 @@ namespace Saba.Data.Persistence.Migrations
 
                     b.HasIndex("Use");
 
-                    b.ToTable("Keys");
+                    b.ToTable("Keys", (string)null);
                 });
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.PersistedGrant", b =>
@@ -302,7 +302,7 @@ namespace Saba.Data.Persistence.Migrations
 
             modelBuilder.Entity("Saba.Data.Models.Attendance", b =>
                 {
-                    b.Property<string>("UserId")
+                    b.Property<string>("AttendeeId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("CourseId")
@@ -311,11 +311,11 @@ namespace Saba.Data.Persistence.Migrations
                     b.Property<DateTime>("AttendanceDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("UserId", "CourseId");
+                    b.HasKey("AttendeeId", "CourseId");
 
                     b.HasIndex("CourseId");
 
-                    b.ToTable("Attendance");
+                    b.ToTable("Attendances", (string)null);
                 });
 
             modelBuilder.Entity("Saba.Data.Models.Course", b =>
@@ -345,7 +345,7 @@ namespace Saba.Data.Persistence.Migrations
 
                     b.HasIndex("CreatorId");
 
-                    b.ToTable("Courses");
+                    b.ToTable("Courses", (string)null);
                 });
 
             modelBuilder.Entity("Saba.Data.Models.User", b =>
@@ -476,21 +476,21 @@ namespace Saba.Data.Persistence.Migrations
 
             modelBuilder.Entity("Saba.Data.Models.Attendance", b =>
                 {
-                    b.HasOne("Saba.Data.Models.Course", "Course")
+                    b.HasOne("Saba.Data.Models.User", "Attendee")
                         .WithMany("Attendances")
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Saba.Data.Models.User", "User")
-                        .WithMany("Attendances")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("AttendeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Course");
+                    b.HasOne("Saba.Data.Models.Course", "Course")
+                        .WithMany("Attendances")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("Attendee");
+
+                    b.Navigation("Course");
                 });
 
             modelBuilder.Entity("Saba.Data.Models.Course", b =>

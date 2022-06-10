@@ -13,5 +13,7 @@
         public string CreatorName { get; set; }
 
         public bool IsAttended { get; set; }
+
+        public bool IsOwner { get; set; }
     }
 }

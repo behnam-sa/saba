@@ -5,43 +5,44 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Saba.Data.Persistence.Migrations
 {
-    public partial class addAttendeeRelation : Migration
+    public partial class AddCourseAttendance : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "CourseUser",
+                name: "Attendances",
                 columns: table => new
                 {
                     CourseId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Created = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    AttendeeId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    AttendanceDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CourseUser", x => new { x.UserId, x.CourseId });
+                    table.PrimaryKey("PK_Attendances", x => new { x.AttendeeId, x.CourseId });
                     table.ForeignKey(
-                        name: "FK_CourseUser_AspNetUsers_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Attendances_AspNetUsers_AttendeeId",
+                        column: x => x.AttendeeId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CourseUser_Courses_CourseId",
+                        name: "FK_Attendances_Courses_CourseId",
                         column: x => x.CourseId,
                         principalTable: "Courses",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_CourseUser_CourseId",
-                table: "CourseUser",
+                name: "IX_Attendances_CourseId",
+                table: "Attendances",
                 column: "CourseId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "CourseUser");
+                name: "Attendances");
         }
     }
 }

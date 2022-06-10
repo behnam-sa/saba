@@ -12,8 +12,8 @@ using Saba.Data.Persistence;
 namespace Saba.Data.Persistence.Migrations
 {
     [DbContext(typeof(SabaDbContext))]
-    [Migration("20220610161815_AddCourseAttendanceCascadeNoAction")]
-    partial class AddCourseAttendanceCascadeNoAction
+    [Migration("20220610183329_AddCourseAttendance")]
+    partial class AddCourseAttendance
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -304,7 +304,7 @@ namespace Saba.Data.Persistence.Migrations
 
             modelBuilder.Entity("Saba.Data.Models.Attendance", b =>
                 {
-                    b.Property<string>("UserId")
+                    b.Property<string>("AttendeeId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("CourseId")
@@ -313,11 +313,11 @@ namespace Saba.Data.Persistence.Migrations
                     b.Property<DateTime>("AttendanceDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("UserId", "CourseId");
+                    b.HasKey("AttendeeId", "CourseId");
 
                     b.HasIndex("CourseId");
 
-                    b.ToTable("Attendance");
+                    b.ToTable("Attendances");
                 });
 
             modelBuilder.Entity("Saba.Data.Models.Course", b =>
@@ -478,21 +478,21 @@ namespace Saba.Data.Persistence.Migrations
 
             modelBuilder.Entity("Saba.Data.Models.Attendance", b =>
                 {
-                    b.HasOne("Saba.Data.Models.Course", "Course")
+                    b.HasOne("Saba.Data.Models.User", "Attendee")
                         .WithMany("Attendances")
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Saba.Data.Models.User", "User")
-                        .WithMany("Attendances")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("AttendeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Course");
+                    b.HasOne("Saba.Data.Models.Course", "Course")
+                        .WithMany("Attendances")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("Attendee");
+
+                    b.Navigation("Course");
                 });
 
             modelBuilder.Entity("Saba.Data.Models.Course", b =>

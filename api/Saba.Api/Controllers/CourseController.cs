@@ -60,34 +60,59 @@ namespace Saba.Api.Controllers
             return await courseInfos.ToListAsync();
         }
 
+        [HttpGet("attended")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<CourseInfo>>> GetAttendedCourses()
+        {
+            if (User.Identity?.Name is null)
+            {
+                return Forbid();
+            }
+
+            var courseInfos = _context
+                .Attendances
+                .Where(a => a.AttendeeId == User.Identity.Name)
+                .Select(a => new CourseInfo
+                {
+                    Id = a.Course.Id,
+                    Name = a.Course.Name,
+                    Description = a.Course.Description,
+                    CreationDate = a.Course.CreationDate,
+                    CreatorName = a.Course.Creator.DisplayName,
+                });
+
+            return await courseInfos.ToListAsync();
+        }
+
         // GET: api/Course/5
         [HttpGet("{id:int}")]
         public async Task<ActionResult<CourseDetails>> GetCourse(int id)
         {
             var isLoggedIn = User.Identity?.Name is not null;
 
-            var course = await _context
+            var courseDetails = await _context
                 .Courses
-                .Include(course => course.Creator)
-                .Include(course => course.Attendances)
-                .SingleOrDefaultAsync(course => course.Id == id);
+                .Where(course => course.Id == id)
+                .Select(course =>
+                    new CourseDetails
+                    {
+                        Id = id,
+                        Name = course.Name,
+                        Description = course.Description,
+                        CreationDate = course.CreationDate,
+                        CreatorName = course.Creator.DisplayName,
+                        IsAttended = course.Attendances.Any(x => x.AttendeeId == User.Identity!.Name),
+                        IsOwner = course.CreatorId == User.Identity!.Name,
+                    }
+                )
+                .SingleOrDefaultAsync();
 
-            if (course is null)
+            if (courseDetails is null)
             {
                 return NotFound();
             }
 
-            var isAttended = isLoggedIn && course.Attendances.Any(x => x.UserId == User.Identity?.Name);
-
-            return new CourseDetails
-            {
-                Id = id,
-                Name = course.Name,
-                Description = course.Description,
-                CreationDate = course.CreationDate,
-                CreatorName = course.Creator.DisplayName,
-                IsAttended = isAttended,
-            };
+            return courseDetails;
         }
 
         // PUT: api/Course/5
@@ -106,7 +131,6 @@ namespace Saba.Api.Controllers
             {
                 return Forbid();
             }
-
 
             course.Name = editInfo.Name;
             course.Description = editInfo.Description;
@@ -177,7 +201,10 @@ namespace Saba.Api.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteCourse(int id)
         {
-            var course = await _context.Courses.FindAsync(id);
+            var course = await _context
+                .Courses
+                .Include(c => c.Attendances)
+                .SingleOrDefaultAsync(c => c.Id == id);
 
             if (course is null)
             {
@@ -214,14 +241,14 @@ namespace Saba.Api.Controllers
                 return NotFound();
             }
 
-            if (course.Attendances.Any(x => x.UserId == User.Identity.Name))
+            if (course.Attendances.Any(x => x.AttendeeId == User.Identity.Name))
             {
                 return BadRequest();
             }
 
             var attendance = new Attendance()
             {
-                UserId = User.Identity.Name,
+                AttendeeId = User.Identity.Name,
                 CourseId = id,
                 AttendanceDate = DateTime.Now
             };
@@ -251,7 +278,7 @@ namespace Saba.Api.Controllers
                 return NotFound();
             }
 
-            var relatedRelations = course.Attendances.Where(x => x.UserId == User.Identity.Name).ToList();
+            var relatedRelations = course.Attendances.Where(x => x.AttendeeId == User.Identity.Name).ToList();
             if (relatedRelations.Count != 1)
             {
                 return BadRequest();
