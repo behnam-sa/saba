@@ -23,18 +23,6 @@ namespace Saba.Data.Persistence
                 .Entity<Attendance>(builder =>
                 {
                     builder.HasKey(x => new { x.UserId, x.CourseId });
-
-                    builder
-                    .HasOne(x => x.User)
-                    .WithMany(x => x.Attendances)
-                    .HasForeignKey(x => x.UserId)
-                    .OnDelete(DeleteBehavior.NoAction);
-
-                    builder
-                    .HasOne(x => x.Course)
-                    .WithMany(x => x.Attendances)
-                    .HasForeignKey(x => x.CourseId)
-                    .OnDelete(DeleteBehavior.NoAction);
                 });
         }
     }
