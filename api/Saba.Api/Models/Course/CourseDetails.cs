@@ -11,5 +11,7 @@
         public DateTime CreationDate { get; set; }
 
         public string CreatorName { get; set; }
+
+        public bool IsAttended { get; set; }
     }
 }

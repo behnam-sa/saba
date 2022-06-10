@@ -64,7 +64,16 @@ namespace Saba.Api.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult<CourseDetails>> GetCourse(int id)
         {
-            var course = await _context.Courses.Include(course => course.Creator).SingleOrDefaultAsync(course => course.Id == id);
+            if (User.Identity?.Name is null)
+            {
+                return Forbid();
+            }
+
+            var course = await _context
+                .Courses
+                .Include(course => course.Creator)
+                .Include(course => course.CourseUsers)
+                .SingleOrDefaultAsync(course => course.Id == id);
 
             if (course is null)
             {
@@ -78,6 +87,7 @@ namespace Saba.Api.Controllers
                 Description = course.Description,
                 CreationDate = course.CreationDate,
                 CreatorName = course.Creator.DisplayName,
+                IsAttended = course.CourseUsers.Any(x => x.UserId == User.Identity.Name),
             };
         }
 
@@ -183,7 +193,70 @@ namespace Saba.Api.Controllers
             _context.Courses.Remove(course);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok();
+        }
+
+        [HttpGet("attend/{id:int}")]
+        [Authorize]
+        public async Task<IActionResult> Attend(int id)
+        {
+            if (User.Identity?.Name is null)
+            {
+                return Forbid();
+            }
+
+            var course = await _context
+                .Courses
+                .Include(x => x.CourseUsers)
+                .SingleOrDefaultAsync(x => x.Id == id);
+
+            if (course is null)
+            {
+                return NotFound();
+            }
+
+            if (course.CourseUsers.Any(x => x.UserId == User.Identity.Name))
+            {
+                return BadRequest();
+            }
+
+            var courseUser = new CourseUser() { UserId = User.Identity.Name, CourseId = id };
+            course.CourseUsers.Add(courseUser);
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpGet("unattend/{id:int}")]
+        [Authorize]
+        public async Task<IActionResult> UnAttend(int id)
+        {
+            if (User.Identity?.Name is null)
+            {
+                return Forbid();
+            }
+
+            var course = await _context
+                .Courses
+                .Include(x => x.CourseUsers)
+                .SingleOrDefaultAsync(x => x.Id == id);
+
+            if (course is null)
+            {
+                return NotFound();
+            }
+
+            var relatedRelations = course.CourseUsers.Where(x => x.UserId == User.Identity.Name).ToList();
+            if (relatedRelations.Count != 1)
+            {
+                return BadRequest();
+            }
+
+            var courseUser = relatedRelations[0];
+            _context.Entry(courseUser).State = EntityState.Deleted;
+            await _context.SaveChangesAsync();
+
+            return Ok();
         }
 
         private bool CourseExists(int id)
