@@ -1,0 +1,49 @@
+@use '@angular/material' as mat;
+@use '../../../theme' as theme;
+
+:host {
+    display: grid;
+}
+
+.spinner-container {
+    display: grid;
+    align-items: center;
+    justify-items: center;
+}
+
+.header-search {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: theme.$density-large;
+}
+
+a.row-link {
+    text-decoration: none;
+
+    mat-row {
+        transition: background-color 200ms;
+
+        &:hover {
+            background-color: rgba(0, 0, 0, 0.04);
+        }
+    }
+}
+
+.mat-column-name {
+    flex-grow: 2;
+    padding: theme.$density-normal 0;
+}
+
+.mat-column-actions {
+    flex-grow: 0.5;
+}
+
+.mat-no-data-row {
+    display: grid;
+
+    .mat-cell {
+        display: grid;
+        align-items: center;
+    }
+}

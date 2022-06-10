@@ -1,1 +1,53 @@
-<p>course-list works!</p>
+<div *ngIf="loading" class="spinner-container">
+    <mat-spinner></mat-spinner>
+</div>
+
+<div [hidden]="loading">
+    <div class="header-search">
+        <h1>همه‌ی دوره‌ها</h1>
+
+        <mat-form-field appearance="outline">
+            <mat-label>جستجو</mat-label>
+            <input matInput [ngModel]="dataSource.filter" (ngModelChange)="applyFilter($event)" #filterInput />
+            <button type="button" mat-icon-button matSuffix (click)="applyFilter(filterInput.value)">
+                <mat-icon>search</mat-icon>
+            </button>
+        </mat-form-field>
+    </div>
+
+    <mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort #sort="matSort">
+        <ng-container matColumnDef="name">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>دوره</mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <div class="name-description">
+                    <div class="mat-body-strong">{{ element.name }}</div>
+                    <div class="mat-caption">{{ element.description }}</div>
+                </div>
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="creatorName">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>استاد</mat-header-cell>
+            <mat-cell *matCellDef="let element">{{ element.creatorName }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="creationDate">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>تاریخ شروع</mat-header-cell>
+            <mat-cell *matCellDef="let element">{{
+                element.creationDate.toLocaleDateString('fa-Ir', dateTimeOptions)
+            }}</mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <a *matRowDef="let row; columns: displayedColumns" [routerLink]="['/course', row.id]" class="row-link">
+            <mat-row matRipple></mat-row>
+        </a>
+
+        <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" *ngIf="!filterInput.value">در حال حاضر هیچ دوره‌ای ایجاد نکرده‌اید.</td>
+            <td class="mat-cell" *ngIf="filterInput.value">دوره‌ی مرتبطی با «{{ filterInput.value }}» یافت نشد.</td>
+        </tr>
+
+        <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" #paginator></mat-paginator>
+    </mat-table>
+</div>

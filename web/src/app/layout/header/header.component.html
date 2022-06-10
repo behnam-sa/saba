@@ -1,4 +1,4 @@
-<mat-toolbar color="primary" style="justify-content: space-between">
+<mat-toolbar color="primary">
     <div class="header-row">
         <a mat-button routerLink="/">
             <span class="header-title">
@@ -8,15 +8,25 @@
         </a>
         <ul *ngIf="loaded | async" class="header-row">
             <li *ngIf="loggedIn | async">
-                <a mat-button routerLink="/course/mine">
+                <a
+                    mat-button
+                    routerLink="/course/mine"
+                    routerLinkActive="link-active"
+                    [routerLinkActiveOptions]="{ exact: true }"
+                >
                     <mat-icon>school</mat-icon>
                     دوره‌های من
                 </a>
             </li>
             <li>
-                <a mat-button routerLink="/course">
+                <a
+                    mat-button
+                    routerLink="/course"
+                    routerLinkActive="link-active"
+                    [routerLinkActiveOptions]="{ exact: true }"
+                >
                     <mat-icon>search</mat-icon>
-                    جستجو دوره‌ها
+                    جستجوی دوره‌ها
                 </a>
             </li>
         </ul>

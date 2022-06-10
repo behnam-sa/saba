@@ -11,7 +11,8 @@
       </cc:Work>
     </rdf:RDF>
   </metadata>
-<circle xmlns="http://www.w3.org/2000/svg" style="opacity:1;vector-effect:none;fill-opacity:1;fill: white;" cx="132.5" cy="132.5" r="132.5"/>  <g id="layer1" style="display:inline" transform="translate(0.20833333,-32.208317)" />
+  <circle xmlns="http://www.w3.org/2000/svg" style="opacity:1;vector-effect:none;fill-opacity:1;fill: white;" cx="132.5" cy="132.5" r="132.5"/>
+  <g id="layer1" style="display:inline" transform="translate(0.20833333,-32.208317)" />
   <g id="layer2" transform="translate(0.20833333,-32.208317)">
     <g id="g4516" transform="matrix(2.4819787,0,0,2.4819787,-4114.7181,706.85823)">
 	  <path id="path4513-6-7-5-3" d="m 1669.7664,-220.96799 c -3.4831,-6e-5 -6.3067,3.45812 -6.3067,7.72402 0,4.2659 2.5563,7.18954 6.3067,7.72402 l 22.8809,5.02619 m 13.6936,3.00805 10.3324,2.26969 42.1444,-23.718" style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#673ab7;stroke-width:2.999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
