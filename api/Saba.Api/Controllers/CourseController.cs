@@ -193,7 +193,7 @@ namespace Saba.Api.Controllers
             _context.Courses.Remove(course);
             await _context.SaveChangesAsync();
 
-            return Ok();
+            return NoContent();
         }
 
         [HttpPost("attend/{id:int}")]
