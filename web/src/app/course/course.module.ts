@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ExamModule } from '../exam/exam.module';
 import { MaterialModule } from '../material/material.module';
 import { CourseDetailsComponent } from './course-details/course-details.component';
 import { CourseListComponent } from './course-list/course-list.component';
@@ -22,7 +23,7 @@ import { CourseService } from './services/course.service';
         EditCourseDialogComponent,
         DeleteCourseDialogComponent,
     ],
-    imports: [CommonModule, FormsModule, ReactiveFormsModule, MaterialModule, CourseRoutingModule],
+    imports: [CommonModule, FormsModule, ReactiveFormsModule, MaterialModule, CourseRoutingModule, ExamModule],
     providers: [CourseService],
 })
 export class CourseModule {}

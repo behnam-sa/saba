@@ -222,7 +222,7 @@ namespace Saba.Api.Controllers
             return NoContent();
         }
 
-        [HttpPost("attend/{id:int}")]
+        [HttpPost("{id:int}/attend")]
         [Authorize]
         public async Task<IActionResult> Attend(int id)
         {
@@ -259,7 +259,7 @@ namespace Saba.Api.Controllers
             return NoContent();
         }
 
-        [HttpPost("unattend/{id:int}")]
+        [HttpPost("{id:int}/unattend")]
         [Authorize]
         public async Task<IActionResult> UnAttend(int id)
         {

@@ -1,0 +1,83 @@
+<h1>آزمون‌ها</h1>
+
+<div class="mat-elevation-z2">
+    <mat-table
+        [dataSource]="dataSource"
+        cdkDropList
+        [cdkDropListDisabled]="dragDisabled"
+        (cdkDropListDropped)="dropItem($event)"
+    >
+        <ng-container matColumnDef="drag-handle">
+            <mat-header-cell *matHeaderCellDef></mat-header-cell>
+            <mat-cell *matCellDef>
+                <mat-icon
+                    cdkDragHandle
+                    (mousedown)="dragDisabled = false"
+                    (mouseup)="dragDisabled = true"
+                    class="drag-handle"
+                    >drag_handle</mat-icon
+                >
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="name">
+            <mat-header-cell *matHeaderCellDef>آزمون</mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <div class="name-description">
+                    <div class="mat-body-strong">{{ element.name }}</div>
+                    <div class="mat-caption">{{ element.description }}</div>
+                </div>
+            </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="creationDate">
+            <mat-header-cell *matHeaderCellDef>تاریخ ایجاد</mat-header-cell>
+            <mat-cell *matCellDef="let element">{{
+                element.creationDate.toLocaleDateString('fa-Ir', dateTimeOptions)
+            }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef>
+                <button *ngIf="course.isOwner" mat-flat-button color="primary" (click)="createExam()">
+                    <mat-icon>add</mat-icon>
+                    آزمون جدید
+                </button>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <ng-container *ngIf="!course.isOwner && course.isAttended">
+                    <a
+                        mat-flat-button
+                        color="primary"
+                        [routerLink]="['/course', course.id, 'exam', element.id, 'take']"
+                    >
+                        شرکت در آزمون
+                    </a>
+                </ng-container>
+                <ng-container *ngIf="course.isOwner">
+                    <a
+                        mat-icon-button
+                        matTooltip="تنظیمات"
+                        color="primary"
+                        [routerLink]="['/course', course.id, 'exam', element.id]"
+                    >
+                        <mat-icon>settings</mat-icon>
+                    </a>
+                    <button mat-icon-button matTooltip="ویرایش" color="primary" (click)="editExam(element)">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                    <button mat-icon-button matTooltip="حذف" color="warn" (click)="deleteExam(element)">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </ng-container>
+            </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns" cdkDrag cdkDragLockAxis="y"></mat-row>
+
+        <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell">آزمونی وجود ندارد.</td>
+        </tr>
+    </mat-table>
+</div>

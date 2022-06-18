@@ -22,9 +22,12 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSortModule } from '@angular/material/sort';
+import { MatStepperModule } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule, MAT_TOOLTIP_DEFAULT_OPTIONS } from '@angular/material/tooltip';
 import { PaginatorIntl } from './services/paginator-intl.service';
+import { tooltipDefaultOptions } from './services/tooltip-default-options';
 
 const material = [
     MatSnackBarModule,
@@ -52,11 +55,16 @@ const material = [
     MatProgressBarModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
+    MatTooltipModule,
+    MatStepperModule,
 ];
 
 @NgModule({
     imports: [material],
-    providers: [{ provide: MatPaginatorIntl, useClass: PaginatorIntl }],
+    providers: [
+        { provide: MatPaginatorIntl, useClass: PaginatorIntl },
+        { provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: tooltipDefaultOptions },
+    ],
     exports: [material],
 })
 export class MaterialModule {}

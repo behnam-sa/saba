@@ -1,0 +1,19 @@
+<h2 mat-dialog-title>ویرایش آزمون</h2>
+
+<mat-dialog-content>
+    <form [formGroup]="form">
+        <div>
+            <mat-form-field>
+                <mat-label>نام آزمون</mat-label>
+                <input matInput formControlName="name" required />
+            </mat-form-field>
+        </div>
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+    <button mat-button color="warn" [mat-dialog-close]="false">لغو</button>
+    <button mat-button color="primary" [disabled]="!form.valid" (click)="edit()">ویرایش</button>
+
+    <mat-progress-bar *ngIf="sendingRequest" mode="indeterminate"></mat-progress-bar>
+</mat-dialog-actions>

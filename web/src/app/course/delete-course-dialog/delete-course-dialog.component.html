@@ -7,7 +7,7 @@
 
 <mat-dialog-actions>
     <button mat-button [mat-dialog-close]="false">لغو</button>
-    <button mat-button color="warn" (click)="edit()">حذف</button>
+    <button mat-button color="warn" (click)="delete()">حذف</button>
 
     <mat-progress-bar *ngIf="sendingRequest" mode="indeterminate"></mat-progress-bar>
 </mat-dialog-actions>
