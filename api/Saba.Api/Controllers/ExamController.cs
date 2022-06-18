@@ -141,6 +141,8 @@ namespace Saba.Api.Controllers
             var exam = await _context.Courses
                 .Include(c => c.Exams)
                 .ThenInclude(e => e.Attempts)
+                .Include(c => c.Exams)
+                .ThenInclude(e => e.Questions)
                 .Where(c => c.Id == courseId)
                 .SelectMany(c => c.Exams)
                 .SingleOrDefaultAsync(e => e.Id == id);
