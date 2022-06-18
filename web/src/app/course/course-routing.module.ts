@@ -18,7 +18,16 @@ const routes: Routes = [
             },
             {
                 path: ':id',
-                component: CourseDetailsComponent,
+                children: [
+                    {
+                        path: 'exam',
+                        loadChildren: () => import('../exam/exam.module').then((module) => module.ExamModule),
+                    },
+                    {
+                        path: '',
+                        component: CourseDetailsComponent,
+                    },
+                ],
             },
             {
                 path: '',

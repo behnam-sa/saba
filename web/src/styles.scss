@@ -36,3 +36,18 @@ body {
     background: theme.mat-color(theme.$warn-palette);
     color: theme.mat-color(theme.$warn-palette, default-contrast);
 }
+
+mat-row.cdk-drag-preview {
+    box-sizing: border-box;
+    border-radius: 4px;
+    @include mat.elevation(8);
+}
+mat-row.cdk-drag-placeholder {
+    opacity: 0;
+}
+mat-row.cdk-drag-animating {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+mat-row.cdk-drop-list-dragging .mat-row:not(.cdk-drag-placeholder) {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}

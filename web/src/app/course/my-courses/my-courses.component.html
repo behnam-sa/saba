@@ -85,13 +85,13 @@
                     </button>
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    <a mat-icon-button color="primary" [routerLink]="['/course', element.id]">
+                    <a mat-icon-button matTooltip="تنظیمات" color="primary" [routerLink]="['/course', element.id]">
                         <mat-icon>settings</mat-icon>
                     </a>
-                    <button mat-icon-button color="primary" (click)="editCourse(element)">
+                    <button mat-icon-button matTooltip="ویرایش" color="primary" (click)="editCourse(element)">
                         <mat-icon>edit</mat-icon>
                     </button>
-                    <button mat-icon-button color="warn" (click)="deleteCourse(element)">
+                    <button mat-icon-button matTooltip="حذف" color="warn" (click)="deleteCourse(element)">
                         <mat-icon>delete</mat-icon>
                     </button>
                 </mat-cell>

@@ -1,0 +1,46 @@
+@use '@angular/material' as mat;
+@use '../../../theme' as theme;
+
+:host {
+    display: grid;
+}
+
+.spinner-container {
+    display: grid;
+    align-items: center;
+    justify-items: center;
+}
+
+.header-search {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: theme.$density-large;
+}
+
+.mat-column-drag-handle {
+    max-width: 6rem;
+
+    .drag-handle {
+        cursor: move;
+        color: theme.mat-color(theme.$foreground-palette, secondary-text);
+    }
+}
+
+.mat-column-name {
+    flex-grow: 2;
+    padding: theme.$density-normal 0;
+}
+
+.mat-column-actions {
+    max-width: 15rem;
+}
+
+.mat-no-data-row {
+    display: grid;
+
+    .mat-cell {
+        display: grid;
+        align-items: center;
+    }
+}

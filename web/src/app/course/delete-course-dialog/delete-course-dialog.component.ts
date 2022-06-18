@@ -22,7 +22,7 @@ export class DeleteCourseDialogComponent implements OnInit {
 
     ngOnInit(): void {}
 
-    public edit(): void {
+    public delete(): void {
         this.sendingRequest = true;
 
         this.courseService.deleteCourse(this.data.id).subscribe({
@@ -32,7 +32,7 @@ export class DeleteCourseDialogComponent implements OnInit {
             },
             error: (error) => {
                 if (error instanceof HttpErrorResponse) {
-                    const message = error.error?.message ?? 'خطا در برقراری ارتباط با سرور';
+                    const message = error.error?.message ?? 'خطا در حذف دوره';
                     this.snackBar.open(message, undefined, {
                         duration: 3000,
                         verticalPosition: 'bottom',

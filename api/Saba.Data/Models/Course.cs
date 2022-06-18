@@ -18,5 +18,7 @@ namespace Saba.Data.Models
         public string CreatorId { get; set; }
 
         public ICollection<Attendance> Attendances { get; set; }
+
+        public ICollection<Exam> Exams { get; set; }
     }
 }

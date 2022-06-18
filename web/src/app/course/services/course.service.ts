@@ -45,11 +45,11 @@ export class CourseService {
     }
 
     public attendCourse(id: number): Observable<void> {
-        return this.api.post<void>(`course/attend/${id}`);
+        return this.api.post<void>(`course/${id}/attend`);
     }
 
     public unattendCourse(id: number): Observable<void> {
-        return this.api.post<void>(`course/unattend/${id}`);
+        return this.api.post<void>(`course/${id}/unattend`);
     }
 
     private parseCourseInfo<T extends CourseInfo>(data: T): T {

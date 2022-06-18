@@ -45,7 +45,7 @@ export class EditCourseDialogComponent implements OnInit {
             },
             error: (error) => {
                 if (error instanceof HttpErrorResponse) {
-                    const message = error.error?.message ?? 'خطا در برقراری ارتباط با سرور';
+                    const message = error.error?.message ?? 'خطا در ویرایش دوره';
                     this.snackBar.open(message, undefined, {
                         duration: 3000,
                         verticalPosition: 'bottom',

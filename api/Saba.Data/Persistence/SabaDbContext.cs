@@ -30,6 +30,22 @@ namespace Saba.Data.Persistence
                         .WithMany(c => c.Attendances)
                         .OnDelete(DeleteBehavior.ClientCascade);
                 });
+
+            builder
+                .Entity<Attempt>(builder =>
+                {
+                    builder.HasOne(a => a.Exam)
+                        .WithMany(e => e.Attempts)
+                        .OnDelete(DeleteBehavior.ClientCascade);
+                });
+
+            builder
+                .Entity<Answer>(builder =>
+                {
+                    builder.HasOne(a => a.Question)
+                        .WithMany(q => q.Answers)
+                        .OnDelete(DeleteBehavior.ClientCascade);
+                });
         }
     }
 }
