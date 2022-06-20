@@ -1,13 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Saba.Api.Models.Exam;
+using Saba.Api.Models.Option;
 using Saba.Api.Models.Question;
 using Saba.Data.Models;
 using Saba.Data.Persistence;
 
 namespace Saba.Api.Controllers
 {
-    [Route("course/{courseId:int}/Exam/{examId:int}/[controller]")]
+    [Route("Course/{courseId:int}/Exam/{examId:int}/[controller]")]
     [ApiController]
     public class QuestionController : ControllerBase
     {
@@ -19,7 +20,7 @@ namespace Saba.Api.Controllers
         }
 
         [HttpPut("{questionId:int}")]
-        public async Task<IActionResult> PutExam(int courseId, int examId, int questionId, QuestionInfoEdit edit)
+        public async Task<IActionResult> PutQuestion(int courseId, int examId, int questionId, QuestionInfoEdit edit)
         {
             var question = await _context.Courses
                 .Include(c => c.Exams)
@@ -44,7 +45,7 @@ namespace Saba.Api.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await ExamExists(courseId, questionId))
+                if (!await QuestionExists(courseId, examId, questionId))
                 {
                     return NotFound();
                 }
@@ -58,7 +59,7 @@ namespace Saba.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ExamInfo>> PostExam(int courseId, int examId, QuestionInfoCreate create)
+        public async Task<ActionResult<QuestionInfo>> PostQuestion(int courseId, int examId, QuestionInfoCreate create)
         {
             var exam = await _context
                 .Courses
@@ -75,25 +76,26 @@ namespace Saba.Api.Controllers
 
             var question = new Question()
             {
-                Text = create.Text,
-                Order = create.Order,
                 ExamId = examId,
+                Text = create.Text,
+                Order = exam.Questions.Any() ? exam.Questions.Max(e => e.Order) + 1 : 1,
             };
 
             exam.Questions.Add(question);
             await _context.SaveChangesAsync();
 
-            var createdExam = new ExamInfo {Id = exam.Id, Name = exam.Name, CreationDate = exam.CreationDate};
-            return base.CreatedAtAction("", new {courseId, id = exam.Id}, createdExam);
+            var createdQuestion = new QuestionInfo { Id = question.Id, Text = question.Text, Options = Enumerable.Empty<OptionInfo>() };
+            return createdQuestion;
         }
 
         // DELETE: api/Exam/5
         [HttpDelete("{questionId:int}")]
-        public async Task<IActionResult> DeleteExam(int courseId, int examId, int questionId)
+        public async Task<IActionResult> DeleteQuestion(int courseId, int examId, int questionId)
         {
             var exam = await _context.Courses
                 .Include(c => c.Exams)
                 .ThenInclude(e => e.Questions)
+                .ThenInclude(q => q.Answers)
                 .Include(c => c.Exams)
                 .ThenInclude(e => e.Attempts)
                 .Where(c => c.Id == courseId)
@@ -114,7 +116,7 @@ namespace Saba.Api.Controllers
         }
 
         [HttpPost("reorder")]
-        public async Task<IActionResult> ReorderExam(int courseId, int examId, QuestionOrders orders)
+        public async Task<IActionResult> ReorderQuestion(int courseId, int examId, QuestionOrders orders)
         {
             var course = await _context
                 .Courses
@@ -129,12 +131,12 @@ namespace Saba.Api.Controllers
                 return NotFound();
             }
 
-            if (orders.Orders.Count != course.Exams.Count)
+            if (orders.Orders.Count != exam.Questions.Count)
             {
                 return BadRequest();
             }
 
-            if (orders.Orders.Values.Distinct().Count() != course.Exams.Count)
+            if (orders.Orders.Values.Distinct().Count() != exam.Questions.Count)
             {
                 return BadRequest();
             }
@@ -161,12 +163,14 @@ namespace Saba.Api.Controllers
             return NoContent();
         }
 
-        private async Task<bool> ExamExists(int courseId, int id)
+        private async Task<bool> QuestionExists(int courseId, int examId, int questionId)
         {
             return await _context.Courses
                 .Where(c => c.Id == courseId)
                 .SelectMany(c => c.Exams)
-                .AnyAsync(e => e.Id == id);
+                .Where(e => e.Id == examId)
+                .SelectMany(e => e.Questions)
+                .AnyAsync(e => e.Id == questionId);
         }
     }
 }

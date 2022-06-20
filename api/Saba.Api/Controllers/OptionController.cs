@@ -8,7 +8,7 @@ using Saba.Data.Persistence;
 
 namespace Saba.Api.Controllers
 {
-    [Route("course/{courseId:int}/Exam/{examId:int}/Question/{questionId:int}/[controller]")]
+    [Route("Course/{courseId:int}/Exam/{examId:int}/Question/{questionId:int}/[controller]")]
     [ApiController]
     public class OptionController : ControllerBase
     {
@@ -20,7 +20,7 @@ namespace Saba.Api.Controllers
         }
 
         [HttpPut("{optionId:int}")]
-        public async Task<IActionResult> PutExam(
+        public async Task<IActionResult> PutOption(
             int courseId,
             int examId,
             int questionId,
@@ -31,6 +31,7 @@ namespace Saba.Api.Controllers
             var question = await _context.Courses
                 .Include(c => c.Exams)
                 .ThenInclude(e => e.Questions)
+                .ThenInclude(q => q.Options)
                 .Where(c => c.Id == courseId)
                 .SelectMany(c => c.Exams)
                 .Where(c => c.Id == examId)
@@ -55,7 +56,7 @@ namespace Saba.Api.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await ExamExists(courseId, optionId))
+                if (!await OptionExists(courseId, examId, questionId, optionId))
                 {
                     return NotFound();
                 }
@@ -79,6 +80,7 @@ namespace Saba.Api.Controllers
                 .Courses
                 .Include(c => c.Exams)
                 .ThenInclude(exam => exam.Questions)
+                .ThenInclude(q => q.Options)
                 .Where(c => c.Id == courseId)
                 .SelectMany(c => c.Exams)
                 .SingleOrDefaultAsync(e => e.Id == examId);
@@ -93,25 +95,25 @@ namespace Saba.Api.Controllers
             var option = new Option()
             {
                 Text = create.Text,
-                QuestionId = questionId
+                QuestionId = questionId,
+                Order = question.Options.Any() ? question.Options.Max(e => e.Order) + 1 : 1,
             };
 
             question.Options.Add(option);
             await _context.SaveChangesAsync();
 
-            var createdExam = new OptionInfo() {Id = option.Id, Text = option.Text};
-            return base.CreatedAtAction("", new {courseId, id = option.Id}, createdExam);
+            var createdExam = new OptionInfo() { Id = option.Id, Text = option.Text };
+            return Ok(createdExam);
         }
 
         [HttpDelete("{optionId:int}")]
-        public async Task<IActionResult> DeleteExam(int courseId, int examId, int questionId, int optionId)
+        public async Task<IActionResult> DeleteOption(int courseId, int examId, int questionId, int optionId)
         {
             var exam = await _context
                 .Courses
                 .Include(c => c.Exams)
                 .ThenInclude(e => e.Questions)
-                .Include(c => c.Exams)
-                .ThenInclude(e => e.Attempts)
+                .ThenInclude(q => q.Options)
                 .Where(c => c.Id == courseId)
                 .SelectMany(c => c.Exams)
                 .SingleOrDefaultAsync(e => e.Id == examId);
@@ -131,14 +133,14 @@ namespace Saba.Api.Controllers
         }
 
         [HttpPost("reorder")]
-        public async Task<IActionResult> ReorderExam(int courseId, int examId, int questionId, OptionOrders orders)
+        public async Task<IActionResult> ReorderOption(int courseId, int examId, int questionId, OptionOrders orders)
         {
             var course = await _context
                 .Courses
                 .Include(c => c.Exams)
                 .ThenInclude(e => e.Questions)
+                .ThenInclude(q => q.Options)
                 .Include(c => c.Exams)
-                .ThenInclude(e => e.Questions.Select(question => question.Options))
                 .SingleOrDefaultAsync(c => c.Id == courseId);
 
             var exam = course?.Exams.SingleOrDefault(e => e.Id == examId);
@@ -149,12 +151,12 @@ namespace Saba.Api.Controllers
                 return NotFound();
             }
 
-            if (orders.Orders.Count != course.Exams.Count)
+            if (orders.Orders.Count != question.Options.Count)
             {
                 return BadRequest();
             }
 
-            if (orders.Orders.Values.Distinct().Count() != course.Exams.Count)
+            if (orders.Orders.Values.Distinct().Count() != question.Options.Count)
             {
                 return BadRequest();
             }
@@ -181,12 +183,16 @@ namespace Saba.Api.Controllers
             return NoContent();
         }
 
-        private async Task<bool> ExamExists(int courseId, int id)
+        private async Task<bool> OptionExists(int courseId, int examId, int questionId, int optionId)
         {
             return await _context.Courses
                 .Where(c => c.Id == courseId)
                 .SelectMany(c => c.Exams)
-                .AnyAsync(e => e.Id == id);
+                .Where(e => e.Id == examId)
+                .SelectMany(e => e.Questions)
+                .Where(q => q.Id == questionId)
+                .SelectMany(q => q.Options)
+                .AnyAsync(e => e.Id == optionId);
         }
     }
 }
