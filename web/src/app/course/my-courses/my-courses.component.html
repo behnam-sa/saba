@@ -50,11 +50,9 @@
             </tr>
         </mat-table>
 
-        <mat-paginator
-            *ngIf="attendedDataSource.data.length > 10"
-            [pageSizeOptions]="[10, 25, 100]"
-            #attendedPaginator
-        ></mat-paginator>
+        <div [hidden]="attendedDataSource.data.length <= 10">
+            <mat-paginator [pageSizeOptions]="[10, 25, 100]" #attendedPaginator></mat-paginator>
+        </div>
     </div>
 
     <br />
@@ -104,10 +102,8 @@
             </tr>
         </mat-table>
 
-        <mat-paginator
-            *ngIf="createdDataSource.data.length > 10"
-            [pageSizeOptions]="[10, 25, 100]"
-            #createdPaginator
-        ></mat-paginator>
+        <div [hidden]="createdDataSource.data.length <= 10">
+            <mat-paginator [pageSizeOptions]="[10, 25, 100]" #createdPaginator></mat-paginator>
+        </div>
     </div>
 </div>

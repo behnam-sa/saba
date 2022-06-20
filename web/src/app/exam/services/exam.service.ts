@@ -23,8 +23,8 @@ export class ExamService {
         );
     }
 
-    public getExam(courseId: number): Observable<ExamDetails> {
-        return this.api.get<ExamDetails>(`course/${courseId}/exam`).pipe(
+    public getExam(courseId: number, id: number): Observable<ExamDetails> {
+        return this.api.get<ExamDetails>(`course/${courseId}/exam/${id}`).pipe(
             map((exam) => ({
                 id: exam.id,
                 name: exam.name,

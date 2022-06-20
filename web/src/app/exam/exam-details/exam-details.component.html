@@ -1,1 +1,110 @@
-<p>exam-details works!</p>
+<div *ngIf="loading" class="spinner-container">
+    <mat-spinner></mat-spinner>
+</div>
+
+<div *ngIf="!loading && !exam">
+    <h2 class="not-found warn-text">
+        <mat-icon>info</mat-icon>
+        آزمون یافت نشد!
+    </h2>
+</div>
+
+<div *ngIf="!loading && exam">
+    <p class="mat-display-2">{{ exam.name }}</p>
+
+    <div>
+        <span class="mat-h2">پرسش‌های آزمون</span>
+        <button
+            mat-icon-button
+            color="primary"
+            matTooltip="پرسش جدید"
+            matTooltipPosition="after"
+            (click)="addQuestion()"
+        >
+            <mat-icon>add</mat-icon>
+        </button>
+    </div>
+
+    <mat-accordion cdkDropList (cdkDropListDropped)="dropQuestion($event)">
+        <mat-expansion-panel
+            *ngFor="let question of exam.questions; let index = index; trackBy: identify"
+            #orderPanel
+            cdkDrag
+        >
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <mat-icon cdkDragHandle class="drag-handle">drag_handle</mat-icon>
+                    <b>{{ (index + 1).toLocaleString('fa-IR') }}.</b>
+                    &nbsp;
+                    {{ question.text }}
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <mat-form-field class="question-title-field" appearance="fill">
+                <mat-label>متن پرسش</mat-label>
+                <textarea
+                    matInput
+                    type="text"
+                    [value]="question.text"
+                    (change)="editQuestion(question, $event)"
+                    cdkTextareaAutosize
+                    [cdkAutosizeMaxRows]="10"
+                ></textarea>
+            </mat-form-field>
+
+            <div>
+                <span class="mat-h3">گزینه‌ها</span>
+                <button
+                    mat-icon-button
+                    color="accent"
+                    matTooltip="گزینه جدید"
+                    matTooltipPosition="after"
+                    (click)="addOption(question)"
+                >
+                    <mat-icon>add</mat-icon>
+                </button>
+            </div>
+            <div class="option-list" cdkDropList (cdkDropListDropped)="dropOption(question, $event)">
+                <mat-form-field
+                    *ngFor="let option of question.options; let optionIndex = index; trackBy: identify"
+                    appearance="fill"
+                    color="accent"
+                    cdkDrag
+                >
+                    <mat-label>گزینه {{ (optionIndex + 1).toLocaleString('fa-IR') }}</mat-label>
+                    <span matPrefix>
+                        <mat-icon cdkDragHandle class="drag-handle">drag_handle</mat-icon>
+                    </span>
+
+                    <textarea
+                        matInput
+                        type="text"
+                        [value]="option.text"
+                        (change)="editOption(question, option, $event)"
+                        cdkTextareaAutosize
+                        [cdkAutosizeMaxRows]="10"
+                    ></textarea>
+                    <button
+                        mat-icon-button
+                        color="warn"
+                        matSuffix
+                        matTooltip="حذف"
+                        class="hoverable-delete-button"
+                        (click)="deleteOption(question, option)"
+                    >
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </mat-form-field>
+            </div>
+
+            <mat-action-row>
+                <button mat-raised-button color="warn" (click)="deleteQuestion(question)">
+                    <mat-icon>delete</mat-icon>
+                    حذف
+                </button>
+            </mat-action-row>
+        </mat-expansion-panel>
+    </mat-accordion>
+
+    <p *ngIf="exam.questions.length === 0">هنوز پرسشی ایجاد نشده است.</p>
+</div>

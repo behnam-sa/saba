@@ -1,6 +1,9 @@
 @use '@angular/material' as mat;
 @use 'theme' as theme;
 
+//
+// Reset
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -21,33 +24,51 @@ body {
     font-family: 'Vazirmatn', 'Helvetica Neue', sans-serif;
 }
 
+//
+// Apply angular material styles
+
 @include mat.core(theme.$theme);
 @include mat.all-component-themes(theme.$theme);
+
+//
+// Snackbar styles
 
 .primary-snackbar {
     background-color: theme.mat-color(theme.$primary-palette);
     color: theme.mat-color(theme.$primary-palette, default-contrast);
 }
+
 .accent-snackbar {
     background-color: theme.mat-color(theme.$accent-palette);
     color: theme.mat-color(theme.$accent-palette, default-contrast);
 }
+
 .warn-snackbar {
     background: theme.mat-color(theme.$warn-palette);
     color: theme.mat-color(theme.$warn-palette, default-contrast);
 }
+
+//
+// Cdk drag and drop styles and animations
 
 mat-row.cdk-drag-preview {
     box-sizing: border-box;
     border-radius: 4px;
     @include mat.elevation(8);
 }
-mat-row.cdk-drag-placeholder {
-    opacity: 0;
-}
-mat-row.cdk-drag-animating {
-    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
-}
-mat-row.cdk-drop-list-dragging .mat-row:not(.cdk-drag-placeholder) {
-    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+
+mat-row,
+mat-expansion-panel,
+mat-form-field {
+    &.cdk-drag-placeholder {
+        opacity: 0;
+    }
+
+    &.cdk-drag-animating {
+        transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+    }
+
+    &.cdk-drop-list-dragging :not(.cdk-drag-placeholder) {
+        transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+    }
 }
