@@ -13,6 +13,11 @@ if (builder.Environment.IsProduction())
             optional: false,
             reloadOnChange: true);
     });
+
+    builder.WebHost.ConfigureLogging((hostingContext, logginBuilder) =>
+    {
+        logginBuilder.AddFile("Logs/Saba-{Date}.txt");
+    });
 }
 
 // Add services to the container.
