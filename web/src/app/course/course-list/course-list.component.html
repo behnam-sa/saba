@@ -46,11 +46,8 @@
             </tr>
         </mat-table>
 
-        <mat-paginator
-            *ngIf="dataSource.data.length > 10"
-            [pageSizeOptions]="[10, 25, 100]"
-            showFirstLastButtons
-            #paginator
-        ></mat-paginator>
+        <div [hidden]="dataSource.data.length <= 10">
+            <mat-paginator [pageSizeOptions]="[10, 25, 100]" showFirstLastButtons #paginator></mat-paginator>
+        </div>
     </div>
 </div>

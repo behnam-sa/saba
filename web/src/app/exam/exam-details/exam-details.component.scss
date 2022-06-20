@@ -1,0 +1,44 @@
+@use '../../../theme' as theme;
+
+:host {
+    display: grid;
+}
+
+.spinner-container {
+    display: grid;
+    align-items: center;
+    justify-items: center;
+}
+
+.not-found {
+    display: flex;
+    align-items: center;
+    gap: theme.$density-normal;
+}
+
+.warn-text {
+    color: theme.mat-color(theme.$warn-palette, text);
+
+    > .mat-icon {
+        color: theme.mat-color(theme.$warn-palette);
+    }
+}
+
+.question-title-field {
+    width: 100%;
+}
+
+.option-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.drag-handle {
+    color: theme.mat-color(theme.$foreground-palette, secondary-text);
+    margin-left: theme.$density-small;
+    cursor: move;
+}
+
+mat-form-field:not(:hover) .hoverable-delete-button {
+    display: none;
+}
