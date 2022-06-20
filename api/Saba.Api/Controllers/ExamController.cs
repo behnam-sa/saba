@@ -8,7 +8,7 @@ using Saba.Data.Persistence;
 
 namespace Saba.Api.Controllers
 {
-    [Route("course/{courseId:int}/[controller]")]
+    [Route("Course/{courseId:int}/[controller]")]
     [ApiController]
     public class ExamController : ControllerBase
     {
@@ -51,11 +51,11 @@ namespace Saba.Api.Controllers
                     Id = e.Id,
                     Name = e.Name,
                     CreationDate = e.CreationDate,
-                    Questions = e.Questions.Select(q => new QuestionInfo
+                    Questions = e.Questions.OrderBy(q => q.Order).Select(q => new QuestionInfo
                     {
                         Id = q.Id,
                         Text = q.Text,
-                        Options = q.Options.Select(o => new OptionInfo
+                        Options = q.Options.OrderBy(o => o.Order).Select(o => new OptionInfo
                         {
                             Id = o.Id,
                             Text = o.Text,
