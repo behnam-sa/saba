@@ -26,11 +26,7 @@
     </div>
 
     <mat-accordion cdkDropList (cdkDropListDropped)="dropQuestion($event)">
-        <mat-expansion-panel
-            *ngFor="let question of exam.questions; let index = index; trackBy: identify"
-            #orderPanel
-            cdkDrag
-        >
+        <mat-expansion-panel *ngFor="let question of exam.questions; let index = index; trackBy: identify" cdkDrag>
             <mat-expansion-panel-header>
                 <mat-panel-title>
                     <mat-icon cdkDragHandle class="drag-handle">drag_handle</mat-icon>

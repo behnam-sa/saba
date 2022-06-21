@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { Subscription } from 'rxjs';
+import { AttemptStatus } from 'src/app/attempt/models/attempt-status';
 import { CourseDetails } from 'src/app/course/models/course-details';
 import { CreateExamDialogComponent } from '../create-exam-dialog/create-exam-dialog.component';
 import { DeleteExamDialogComponent } from '../delete-exam-dialog/delete-exam-dialog.component';
@@ -27,6 +28,7 @@ export class ExamListComponent implements OnInit, OnDestroy {
     public loading: boolean = true;
     public dragDisabled = true;
 
+    public AttemptStatus = AttemptStatus;
     public dateTimeOptions: Intl.DateTimeFormatOptions = {
         year: 'numeric',
         month: 'long',

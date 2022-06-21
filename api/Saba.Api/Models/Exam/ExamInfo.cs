@@ -1,4 +1,7 @@
-﻿namespace Saba.Api.Models.Exam
+﻿using Saba.Api.Models.Attempt;
+using System.Text.Json.Serialization;
+
+namespace Saba.Api.Models.Exam
 {
     public class ExamInfo
     {
@@ -7,5 +10,8 @@
         public string Name { get; set; }
 
         public DateTime CreationDate { get; set; }
+
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public AttemptStatus AttemptStatus { get; set; }
     }
 }

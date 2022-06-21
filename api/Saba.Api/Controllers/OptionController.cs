@@ -12,15 +12,15 @@ namespace Saba.Api.Controllers
     [ApiController]
     public class OptionController : ControllerBase
     {
-        private readonly SabaDbContext _context;
+        private readonly SabaDbContext context;
 
         public OptionController(SabaDbContext context)
         {
-            _context = context;
+            this.context = context;
         }
 
         [HttpPut("{optionId:int}")]
-        public async Task<IActionResult> PutOption(
+        public async Task<IActionResult> Put(
             int courseId,
             int examId,
             int questionId,
@@ -28,7 +28,7 @@ namespace Saba.Api.Controllers
             QuestionInfoEdit edit
         )
         {
-            var question = await _context.Courses
+            var question = await context.Courses
                 .Include(c => c.Exams)
                 .ThenInclude(e => e.Questions)
                 .ThenInclude(q => q.Options)
@@ -48,11 +48,11 @@ namespace Saba.Api.Controllers
             }
 
             option.Text = edit.Text;
-            _context.Entry(question).State = EntityState.Modified;
+            context.Entry(question).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                await context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -70,13 +70,13 @@ namespace Saba.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ExamInfo>> PostOption(
+        public async Task<ActionResult<ExamInfo>> Post(
             int courseId,
             int examId,
             int questionId,
             OptionInfoCreate create)
         {
-            var exam = await _context
+            var exam = await context
                 .Courses
                 .Include(c => c.Exams)
                 .ThenInclude(exam => exam.Questions)
@@ -100,16 +100,16 @@ namespace Saba.Api.Controllers
             };
 
             question.Options.Add(option);
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
 
             var createdExam = new OptionInfo() { Id = option.Id, Text = option.Text };
             return Ok(createdExam);
         }
 
         [HttpDelete("{optionId:int}")]
-        public async Task<IActionResult> DeleteOption(int courseId, int examId, int questionId, int optionId)
+        public async Task<IActionResult> Delete(int courseId, int examId, int questionId, int optionId)
         {
-            var exam = await _context
+            var exam = await context
                 .Courses
                 .Include(c => c.Exams)
                 .ThenInclude(e => e.Questions)
@@ -126,16 +126,16 @@ namespace Saba.Api.Controllers
                 return NotFound();
             }
 
-            _context.Entry(option).State = EntityState.Deleted;
-            await _context.SaveChangesAsync();
+            context.Entry(option).State = EntityState.Deleted;
+            await context.SaveChangesAsync();
 
             return NoContent();
         }
 
         [HttpPost("reorder")]
-        public async Task<IActionResult> ReorderOption(int courseId, int examId, int questionId, OptionOrders orders)
+        public async Task<IActionResult> Reorder(int courseId, int examId, int questionId, OptionOrders orders)
         {
-            var course = await _context
+            var course = await context
                 .Courses
                 .Include(c => c.Exams)
                 .ThenInclude(e => e.Questions)
@@ -175,17 +175,17 @@ namespace Saba.Api.Controllers
 
             foreach (var option in question.Options)
             {
-                _context.Entry(option).State = EntityState.Modified;
+                context.Entry(option).State = EntityState.Modified;
             }
 
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
 
             return NoContent();
         }
 
         private async Task<bool> OptionExists(int courseId, int examId, int questionId, int optionId)
         {
-            return await _context.Courses
+            return await context.Courses
                 .Where(c => c.Id == courseId)
                 .SelectMany(c => c.Exams)
                 .Where(e => e.Id == examId)

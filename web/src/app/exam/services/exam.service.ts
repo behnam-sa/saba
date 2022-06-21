@@ -18,6 +18,7 @@ export class ExamService {
                     id: exam.id,
                     name: exam.name,
                     creationDate: new Date(exam.creationDate),
+                    attemptStatus: exam.attemptStatus,
                 }))
             )
         );

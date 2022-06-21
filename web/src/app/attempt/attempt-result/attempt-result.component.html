@@ -1,0 +1,61 @@
+<div *ngIf="loading" class="spinner-container">
+    <mat-spinner></mat-spinner>
+</div>
+
+<div *ngIf="!loading && !attempt">
+    <h2 class="not-found warn-text">
+        <mat-icon>info</mat-icon>
+        آزمون یافت نشد!
+    </h2>
+</div>
+
+<div *ngIf="!loading && attempt">
+    <p class="mat-display-2">{{ attempt.name }}</p>
+
+    <h2>نتیجه آزمون</h2>
+
+    <mat-accordion>
+        <mat-expansion-panel
+            *ngFor="let answer of attempt.answers; let index = index; trackBy: identify"
+            cdkDrag
+            [expanded]="currectQuestionIndex === index"
+            (opened)="currectQuestionIndex = index"
+        >
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <b>{{ (index + 1).toLocaleString('fa-IR') }}.</b>
+                    &nbsp;
+                    {{ answer.text }}
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <mat-radio-group [disabled]="true" [ngModel]="answer.selectedOption" class="option-list">
+                <mat-radio-button *ngFor="let option of answer.options; let optionIndex = index" [value]="optionIndex">
+                    <span class="normal-color">
+                        <b>{{ alphabeticalNumbering.getText(optionIndex) }}.</b>&nbsp;
+                        {{ option.text }}
+                    </span>
+                </mat-radio-button>
+            </mat-radio-group>
+
+            <mat-action-row>
+                <button
+                    mat-button
+                    color="accent"
+                    [disabled]="index === 0"
+                    (click)="currectQuestionIndex = currectQuestionIndex - 1"
+                >
+                    قبلی
+                </button>
+                <button
+                    mat-button
+                    color="primary"
+                    [disabled]="index === attempt.answers.length - 1"
+                    (click)="currectQuestionIndex = currectQuestionIndex + 1"
+                >
+                    بعدی
+                </button>
+            </mat-action-row>
+        </mat-expansion-panel>
+    </mat-accordion>
+</div>

@@ -45,13 +45,31 @@
                 </button>
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
-                <ng-container *ngIf="!course.isOwner && course.isAttended">
+                <ng-container *ngIf="!course.isOwner && course.isAttended" [ngSwitch]="element.attemptStatus">
+                    {{ element.attempStatus }}
                     <a
+                        *ngSwitchCase="AttemptStatus.notAttempted"
                         mat-flat-button
                         color="primary"
-                        [routerLink]="['/course', course.id, 'exam', element.id, 'take']"
+                        [routerLink]="['/course', course.id, 'exam', element.id, 'attempt', 'begin']"
                     >
                         شرکت در آزمون
+                    </a>
+                    <a
+                        *ngSwitchCase="AttemptStatus.inProgress"
+                        mat-flat-button
+                        color="primary"
+                        [routerLink]="['/course', course.id, 'exam', element.id, 'attempt', 'inprogress']"
+                    >
+                        ادامه آزمون
+                    </a>
+                    <a
+                        *ngSwitchCase="AttemptStatus.finished"
+                        mat-flat-button
+                        color="primary"
+                        [routerLink]="['/course', course.id, 'exam', element.id, 'attempt', 'result']"
+                    >
+                        مشاهده نتیجه
                     </a>
                 </ng-container>
                 <ng-container *ngIf="course.isOwner">

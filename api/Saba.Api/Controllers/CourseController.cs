@@ -11,18 +11,18 @@ namespace Saba.Api.Controllers
     [ApiController]
     public class CourseController : ControllerBase
     {
-        private readonly SabaDbContext _context;
+        private readonly SabaDbContext context;
 
         public CourseController(SabaDbContext context)
         {
-            _context = context;
+            this.context = context;
         }
 
         // GET: api/Course
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CourseInfo>>> GetAllCourses()
+        public async Task<ActionResult<IEnumerable<CourseInfo>>> GetAll()
         {
-            var courseInfos = _context
+            var courseInfos = context
                 .Courses
                 .Select(course => new CourseInfo
                 {
@@ -38,14 +38,14 @@ namespace Saba.Api.Controllers
 
         [HttpGet("created")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<CourseInfo>>> GetCreatedCourses()
+        public async Task<ActionResult<IEnumerable<CourseInfo>>> GetCreated()
         {
             if (User.Identity?.Name is null)
             {
                 return Forbid();
             }
 
-            var courseInfos = _context
+            var courseInfos = context
                 .Courses
                 .Where(c => c.CreatorId == User.Identity.Name)
                 .Select(course => new CourseInfo
@@ -62,14 +62,14 @@ namespace Saba.Api.Controllers
 
         [HttpGet("attended")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<CourseInfo>>> GetAttendedCourses()
+        public async Task<ActionResult<IEnumerable<CourseInfo>>> GetAttended()
         {
             if (User.Identity?.Name is null)
             {
                 return Forbid();
             }
 
-            var courseInfos = _context
+            var courseInfos = context
                 .Attendances
                 .Where(a => a.AttendeeId == User.Identity.Name)
                 .Select(a => new CourseInfo
@@ -86,11 +86,11 @@ namespace Saba.Api.Controllers
 
         // GET: api/Course/5
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<CourseDetails>> GetCourse(int id)
+        public async Task<ActionResult<CourseDetails>> Get(int id)
         {
             var isLoggedIn = User.Identity?.Name is not null;
 
-            var courseDetails = await _context
+            var courseDetails = await context
                 .Courses
                 .Where(course => course.Id == id)
                 .Select(course =>
@@ -118,9 +118,9 @@ namespace Saba.Api.Controllers
         // PUT: api/Course/5
         [HttpPut("{id:int}")]
         [Authorize]
-        public async Task<IActionResult> PutCourse([FromRoute] int id, [FromBody] CourseInfoEdit editInfo)
+        public async Task<IActionResult> Put([FromRoute] int id, [FromBody] CourseInfoEdit editInfo)
         {
-            var course = await _context.Courses.FindAsync(id);
+            var course = await context.Courses.FindAsync(id);
 
             if (course is null)
             {
@@ -135,11 +135,11 @@ namespace Saba.Api.Controllers
             course.Name = editInfo.Name;
             course.Description = editInfo.Description;
 
-            _context.Entry(course).State = EntityState.Modified;
+            context.Entry(course).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                await context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -157,7 +157,7 @@ namespace Saba.Api.Controllers
         // POST: api/Course
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<CourseInfo>> PostCourse(CourseInfoCreate courseInfoCreate)
+        public async Task<ActionResult<CourseInfo>> Post(CourseInfoCreate courseInfoCreate)
         {
             if (User.Identity?.Name is null)
             {
@@ -171,10 +171,10 @@ namespace Saba.Api.Controllers
                 CreatorId = User.Identity.Name
             };
 
-            _context.Courses.Add(course);
-            await _context.SaveChangesAsync();
+            context.Courses.Add(course);
+            await context.SaveChangesAsync();
 
-            var addedCourse = await _context
+            var addedCourse = await context
                 .Courses
                 .Include(item => item.Creator)
                 .SingleAsync(item => course.Id == item.Id);
@@ -201,7 +201,7 @@ namespace Saba.Api.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteCourse(int id)
         {
-            var course = await _context
+            var course = await context
                 .Courses
                 .Include(c => c.Attendances)
                 .SingleOrDefaultAsync(c => c.Id == id);
@@ -216,8 +216,8 @@ namespace Saba.Api.Controllers
                 return Forbid();
             }
 
-            _context.Courses.Remove(course);
-            await _context.SaveChangesAsync();
+            context.Courses.Remove(course);
+            await context.SaveChangesAsync();
 
             return NoContent();
         }
@@ -231,7 +231,7 @@ namespace Saba.Api.Controllers
                 return Forbid();
             }
 
-            var course = await _context
+            var course = await context
                 .Courses
                 .Include(x => x.Attendances)
                 .SingleOrDefaultAsync(x => x.Id == id);
@@ -254,7 +254,7 @@ namespace Saba.Api.Controllers
             };
 
             course.Attendances.Add(attendance);
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
 
             return NoContent();
         }
@@ -268,7 +268,7 @@ namespace Saba.Api.Controllers
                 return Forbid();
             }
 
-            var course = await _context
+            var course = await context
                 .Courses
                 .Include(x => x.Attendances)
                 .SingleOrDefaultAsync(x => x.Id == id);
@@ -285,15 +285,15 @@ namespace Saba.Api.Controllers
             }
 
             var courseUser = relatedRelations[0];
-            _context.Entry(courseUser).State = EntityState.Deleted;
-            await _context.SaveChangesAsync();
+            context.Entry(courseUser).State = EntityState.Deleted;
+            await context.SaveChangesAsync();
 
             return NoContent();
         }
 
         private bool CourseExists(int id)
         {
-            return _context.Courses.Any(e => e.Id == id);
+            return context.Courses.Any(e => e.Id == id);
         }
     }
 }

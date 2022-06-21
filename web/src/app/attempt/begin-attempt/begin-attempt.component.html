@@ -1,0 +1,7 @@
+<div *ngIf="attempt">
+    <p class="mat-display-2">{{ attempt.name }}</p>
+
+    <p>شما هنوز در این آزمون شرکت نکرده‌اید.</p>
+
+    <button mat-raised-button color="primary" (click)="beginAttempt()">شرکت در آزمون</button>
+</div>

@@ -6,9 +6,9 @@ import { AuthTokenService } from '../services/auth-token.service';
     providedIn: 'root',
 })
 export class AuthorizeGuard implements CanActivate {
-    constructor(public tokenService: AuthTokenService, public router: Router) {}
+    constructor(private tokenService: AuthTokenService, private router: Router) {}
 
-    canActivate(): boolean | UrlTree {
+    public canActivate(): boolean | UrlTree {
         if (this.tokenService.isLoggedIn) {
             return true;
         } else {
