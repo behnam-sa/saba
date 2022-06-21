@@ -12,17 +12,17 @@ namespace Saba.Api.Controllers
     [ApiController]
     public class QuestionController : ControllerBase
     {
-        private readonly SabaDbContext _context;
+        private readonly SabaDbContext context;
 
         public QuestionController(SabaDbContext context)
         {
-            _context = context;
+            this.context = context;
         }
 
         [HttpPut("{questionId:int}")]
-        public async Task<IActionResult> PutQuestion(int courseId, int examId, int questionId, QuestionInfoEdit edit)
+        public async Task<IActionResult> Put(int courseId, int examId, int questionId, QuestionInfoEdit edit)
         {
-            var question = await _context.Courses
+            var question = await context.Courses
                 .Include(c => c.Exams)
                 .ThenInclude(e => e.Questions)
                 .Where(c => c.Id == courseId)
@@ -37,11 +37,11 @@ namespace Saba.Api.Controllers
             }
 
             question.Text = edit.Text;
-            _context.Entry(question).State = EntityState.Modified;
+            context.Entry(question).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                await context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -59,9 +59,9 @@ namespace Saba.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<QuestionInfo>> PostQuestion(int courseId, int examId, QuestionInfoCreate create)
+        public async Task<ActionResult<QuestionInfo>> Post(int courseId, int examId, QuestionInfoCreate create)
         {
-            var exam = await _context
+            var exam = await context
                 .Courses
                 .Include(c => c.Exams)
                 .ThenInclude(exam => exam.Questions)
@@ -82,7 +82,7 @@ namespace Saba.Api.Controllers
             };
 
             exam.Questions.Add(question);
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
 
             var createdQuestion = new QuestionInfo { Id = question.Id, Text = question.Text, Options = Enumerable.Empty<OptionInfo>() };
             return createdQuestion;
@@ -92,7 +92,7 @@ namespace Saba.Api.Controllers
         [HttpDelete("{questionId:int}")]
         public async Task<IActionResult> DeleteQuestion(int courseId, int examId, int questionId)
         {
-            var exam = await _context.Courses
+            var exam = await context.Courses
                 .Include(c => c.Exams)
                 .ThenInclude(e => e.Questions)
                 .ThenInclude(q => q.Answers)
@@ -109,16 +109,16 @@ namespace Saba.Api.Controllers
                 return NotFound();
             }
 
-            _context.Entry(question).State = EntityState.Deleted;
-            await _context.SaveChangesAsync();
+            context.Entry(question).State = EntityState.Deleted;
+            await context.SaveChangesAsync();
 
             return NoContent();
         }
 
         [HttpPost("reorder")]
-        public async Task<IActionResult> ReorderQuestion(int courseId, int examId, QuestionOrders orders)
+        public async Task<IActionResult> Reorder(int courseId, int examId, QuestionOrders orders)
         {
-            var course = await _context
+            var course = await context
                 .Courses
                 .Include(c => c.Exams)
                 .ThenInclude(c => c.Questions)
@@ -155,17 +155,17 @@ namespace Saba.Api.Controllers
 
             foreach (var q in exam.Questions)
             {
-                _context.Entry(q).State = EntityState.Modified;
+                context.Entry(q).State = EntityState.Modified;
             }
 
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
 
             return NoContent();
         }
 
         private async Task<bool> QuestionExists(int courseId, int examId, int questionId)
         {
-            return await _context.Courses
+            return await context.Courses
                 .Where(c => c.Id == courseId)
                 .SelectMany(c => c.Exams)
                 .Where(e => e.Id == examId)

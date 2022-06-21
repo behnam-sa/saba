@@ -8,6 +8,8 @@ namespace Saba.Data.Models
 
         public Exam Exam { get; set; }
 
+        public bool IsFinished { get; set; }
+
         [ForeignKey(nameof(Exam))]
         public int ExamId { get; set; }
 
@@ -18,6 +20,6 @@ namespace Saba.Data.Models
 
         public ICollection<Answer> Answers { get; set; }
 
-        public DateTime Time { get; set; }
+        public DateTime? FinishTime { get; set; }
     }
 }

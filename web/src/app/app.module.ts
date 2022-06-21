@@ -10,6 +10,7 @@ import { LayoutModule } from './layout/layout.module';
 import { MaterialModule } from './material/material.module';
 import { ApiService } from './services/api.service';
 import { ConfigService } from './services/config.service';
+import { AlphabeticalNumberingService } from './services/alphabetical-numbering';
 
 function initializeAppFactory(appConfigService: ConfigService): () => Observable<any> {
     return () => appConfigService.loadConfig();
@@ -29,6 +30,7 @@ function initializeAppFactory(appConfigService: ConfigService): () => Observable
     providers: [
         ApiService,
         ConfigService,
+        AlphabeticalNumberingService,
         {
             provide: APP_INITIALIZER,
             multi: true,

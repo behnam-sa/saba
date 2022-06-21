@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Saba.Api.Models.Attempt;
 using Saba.Api.Models.Exam;
 using Saba.Api.Models.Option;
 using Saba.Api.Models.Question;
@@ -12,38 +13,53 @@ namespace Saba.Api.Controllers
     [ApiController]
     public class ExamController : ControllerBase
     {
-        private readonly SabaDbContext _context;
+        private readonly SabaDbContext context;
 
         public ExamController(SabaDbContext context)
         {
-            _context = context;
+            this.context = context;
         }
 
         // GET: api/Exam
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ExamInfo>>> GetExam(int courseId)
+        public async Task<ActionResult<IEnumerable<ExamInfo>>> Get(int courseId)
         {
-            var course = await _context.Courses.Include(c => c.Exams).SingleOrDefaultAsync(c => c.Id == courseId);
+            var course = await context
+                .Courses
+                .Include(c => c.Exams)
+                .ThenInclude(e => e.Attempts)
+                .SingleOrDefaultAsync(c => c.Id == courseId);
 
             if (course == null)
             {
                 return NotFound();
             }
 
-            return course.Exams.OrderBy(e => e.Order)
-                .Select(e => new ExamInfo()
+            return course.Exams
+                .OrderBy(e => e.Order)
+                .Select(e => new
                 {
-                    Id = e.Id,
-                    Name = e.Name,
-                    CreationDate = e.CreationDate,
+                    Exam = e,
+                    Attempt = e.Attempts.Where(a => a.TakerId == User.Identity?.Name).SingleOrDefault()
+                })
+                .Select(r => new ExamInfo()
+                {
+                    Id = r.Exam.Id,
+                    Name = r.Exam.Name,
+                    CreationDate = r.Exam.CreationDate,
+                    AttemptStatus = r.Attempt == null
+                        ? AttemptStatus.NotAttempted
+                        : (r.Attempt.IsFinished
+                            ? AttemptStatus.Finished
+                            : AttemptStatus.InProgress)
                 }).ToList();
         }
 
         // GET: api/Exam/5
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<ExamDetails>> GetExam(int courseId, int id)
+        public async Task<ActionResult<ExamDetails>> Get(int courseId, int id)
         {
-            var exam = await _context.Courses
+            var exam = await context.Courses
                 .Where(c => c.Id == courseId)
                 .SelectMany(c => c.Exams)
                 .Select(e => new ExamDetails
@@ -74,9 +90,9 @@ namespace Saba.Api.Controllers
 
         // PUT: api/Exam/5
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> PutExam(int courseId, int id, ExamInfoEdit examEdit)
+        public async Task<IActionResult> Put(int courseId, int id, ExamInfoEdit examEdit)
         {
-            var exam = await _context.Courses
+            var exam = await context.Courses
                 .Where(c => c.Id == courseId)
                 .SelectMany(c => c.Exams)
                 .SingleOrDefaultAsync(e => e.Id == id);
@@ -87,11 +103,11 @@ namespace Saba.Api.Controllers
             }
 
             exam.Name = examEdit.Name;
-            _context.Entry(exam).State = EntityState.Modified;
+            context.Entry(exam).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                await context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -110,9 +126,9 @@ namespace Saba.Api.Controllers
 
         // POST: api/Exam
         [HttpPost]
-        public async Task<ActionResult<ExamInfo>> PostExam(int courseId, ExamInfoCreate examInfo)
+        public async Task<ActionResult<ExamInfo>> Post(int courseId, ExamInfoCreate examInfo)
         {
-            var course = await _context.Courses.Include(c => c.Exams).SingleOrDefaultAsync(c => c.Id == courseId);
+            var course = await context.Courses.Include(c => c.Exams).SingleOrDefaultAsync(c => c.Id == courseId);
 
             if (course == null)
             {
@@ -128,17 +144,17 @@ namespace Saba.Api.Controllers
             };
 
             course.Exams.Add(exam);
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
 
-            ExamInfo createdExam = new ExamInfo { Id = exam.Id, Name = exam.Name, CreationDate = exam.CreationDate };
-            return base.CreatedAtAction("GetExam", new { courseId, id = exam.Id }, createdExam);
+            var createdExam = new ExamInfo { Id = exam.Id, Name = exam.Name, CreationDate = exam.CreationDate };
+            return base.CreatedAtAction("Get", new { courseId, id = exam.Id }, createdExam);
         }
 
         // DELETE: api/Exam/5
         [HttpDelete("{id:int}")]
-        public async Task<IActionResult> DeleteExam(int courseId, int id)
+        public async Task<IActionResult> Delete(int courseId, int id)
         {
-            var exam = await _context.Courses
+            var exam = await context.Courses
                 .Include(c => c.Exams)
                 .ThenInclude(e => e.Attempts)
                 .Where(c => c.Id == courseId)
@@ -150,16 +166,16 @@ namespace Saba.Api.Controllers
                 return NotFound();
             }
 
-            _context.Entry(exam).State = EntityState.Deleted;
-            await _context.SaveChangesAsync();
+            context.Entry(exam).State = EntityState.Deleted;
+            await context.SaveChangesAsync();
 
             return NoContent();
         }
 
         [HttpPost("reorder")]
-        public async Task<IActionResult> ReorderExam(int courseId, ExamOrders orders)
+        public async Task<IActionResult> Reorder(int courseId, ExamOrders orders)
         {
-            var course = await _context.Courses.Include(c => c.Exams).SingleOrDefaultAsync(c => c.Id == courseId);
+            var course = await context.Courses.Include(c => c.Exams).SingleOrDefaultAsync(c => c.Id == courseId);
 
             if (course is null)
             {
@@ -189,16 +205,16 @@ namespace Saba.Api.Controllers
 
             foreach (var exam in course.Exams)
             {
-                _context.Entry(exam).State = EntityState.Modified;
+                context.Entry(exam).State = EntityState.Modified;
             }
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
 
             return NoContent();
         }
 
         private async Task<bool> ExamExists(int courseId, int id)
         {
-            return await _context.Courses
+            return await context.Courses
                 .Where(c => c.Id == courseId)
                 .SelectMany(c => c.Exams)
                 .AnyAsync(e => e.Id == id);

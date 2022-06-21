@@ -1,0 +1,36 @@
+@use './../../../theme' as theme;
+
+:host {
+    display: grid;
+}
+
+.spinner-container {
+    display: grid;
+    align-items: center;
+    justify-items: center;
+}
+
+.not-found {
+    display: flex;
+    align-items: center;
+    gap: theme.$density-normal;
+}
+
+.warn-text {
+    color: theme.mat-color(theme.$warn-palette, text);
+
+    > .mat-icon {
+        color: theme.mat-color(theme.$warn-palette);
+    }
+}
+
+.normal-color {
+    color: theme.mat-color(theme.$foreground-palette, text);
+}
+
+.option-list {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: theme.$density-normal;
+}

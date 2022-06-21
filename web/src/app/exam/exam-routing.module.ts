@@ -10,7 +10,16 @@ const routes: Routes = [
         children: [
             {
                 path: ':examId',
-                component: ExamDetailsComponent,
+                children: [
+                    {
+                        path: 'attempt',
+                        loadChildren: () => import('../attempt/attempt.module').then((module) => module.AttemptModule),
+                    },
+                    {
+                        path: '',
+                        component: ExamDetailsComponent,
+                    },
+                ],
             },
             {
                 path: '**',
