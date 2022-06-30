@@ -8,6 +8,8 @@ namespace Saba.Api.Models.Question
 
         public string Text { get; set; }
 
+        public int? CorrectOption { get; set; }
+
         public IEnumerable<OptionInfo> Options { get; set; }
     }
 }

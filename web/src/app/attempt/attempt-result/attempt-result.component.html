@@ -12,12 +12,14 @@
 <div *ngIf="!loading && attempt">
     <p class="mat-display-2">{{ attempt.name }}</p>
 
-    <h2>نتیجه آزمون</h2>
+    <h2 class="result-score">
+        <span>نتیجه آزمون</span>
+        <small>{{ score.toLocaleString('fa-IR') }} از {{ totalScore.toLocaleString('fa-IR') }} نمره</small>
+    </h2>
 
     <mat-accordion>
         <mat-expansion-panel
             *ngFor="let answer of attempt.answers; let index = index; trackBy: identify"
-            cdkDrag
             [expanded]="currectQuestionIndex === index"
             (opened)="currectQuestionIndex = index"
         >
@@ -26,14 +28,41 @@
                     <b>{{ (index + 1).toLocaleString('fa-IR') }}.</b>
                     &nbsp;
                     {{ answer.text }}
+
+                    <span *ngIf="answer.correctOption !== null">
+                        <mat-icon *ngIf="answer.correctOption === answer.selectedOption" class="positive"
+                            >check</mat-icon
+                        >
+                        <mat-icon *ngIf="answer.correctOption !== answer.selectedOption" class="negative"
+                            >close</mat-icon
+                        >
+                    </span>
                 </mat-panel-title>
             </mat-expansion-panel-header>
 
             <mat-radio-group [disabled]="true" [ngModel]="answer.selectedOption" class="option-list">
                 <mat-radio-button *ngFor="let option of answer.options; let optionIndex = index" [value]="optionIndex">
-                    <span class="normal-color">
+                    <span class="option-content">
                         <b>{{ alphabeticalNumbering.getText(optionIndex) }}.</b>&nbsp;
                         {{ option.text }}
+
+                        <span *ngIf="answer.correctOption !== null">
+                            <mat-icon
+                                *ngIf="optionIndex === answer.selectedOption && optionIndex === answer.correctOption"
+                                class="positive"
+                                >check</mat-icon
+                            >
+                            <mat-icon
+                                *ngIf="optionIndex === answer.selectedOption && optionIndex !== answer.correctOption"
+                                class="negative"
+                                >close</mat-icon
+                            >
+                            <mat-icon
+                                *ngIf="optionIndex !== answer.selectedOption && optionIndex === answer.correctOption"
+                                class="neutral"
+                                >check</mat-icon
+                            >
+                        </span>
                     </span>
                 </mat-radio-button>
             </mat-radio-group>

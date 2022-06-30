@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs';
 import { ExamDetails } from '../models/exam-details';
 import { OptionInfo } from '../models/option-info';
 import { QuestionInfo } from '../models/question-info';
+import { QuestionInfoEdit } from '../models/question-info-edit';
 import { QuestionOrders } from '../models/question-orders';
 import { ExamService } from '../services/exam.service';
 import { OptionService } from '../services/option.service';
@@ -77,20 +78,11 @@ export class ExamDetailsComponent implements OnInit, OnDestroy {
         });
     }
 
-    public editQuestion(question: QuestionInfo, event: Event) {
+    public editQuestionText(question: QuestionInfo, event: Event) {
         const newValue = (event.target as HTMLInputElement).value;
         question.text = newValue;
 
-        this.questionService.editQuestion(this.courseId!, this.exam!.id, question.id, { text: newValue }).subscribe({
-            error: (error) => {
-                if (error instanceof HttpErrorResponse) {
-                    const message = error.error?.message ?? 'خطا در ویرایش پرسش';
-                    this.showError(message);
-                }
-
-                this.loadData(this.courseId!, this.exam!.id);
-            },
-        });
+        this.editQuestion(question);
     }
 
     public deleteQuestion(question: QuestionInfo) {
@@ -185,10 +177,39 @@ export class ExamDetailsComponent implements OnInit, OnDestroy {
 
     public dropOption(question: QuestionInfo, event: CdkDragDrop<void>) {
         const list = [...question.options];
+        const correctOption = question.correctOption !== null ? list[question.correctOption] : undefined;
+
         moveItemInArray(list, event.previousIndex, event.currentIndex);
         question.options = list;
-
         this.updateOptionOrders(question);
+
+        if (correctOption) {
+            const newCorrectOptionIndex = list.indexOf(correctOption);
+            this.setAnswer(question, newCorrectOptionIndex);
+        }
+    }
+
+    public setAnswer(question: QuestionInfo, correctOption: number | null) {
+        question.correctOption = correctOption;
+        this.editQuestion(question);
+    }
+
+    private editQuestion(question: QuestionInfo) {
+        const edit: QuestionInfoEdit = {
+            text: question.text,
+            correctOption: question.correctOption,
+        };
+
+        this.questionService.editQuestion(this.courseId!, this.exam!.id, question.id, edit).subscribe({
+            error: (error) => {
+                if (error instanceof HttpErrorResponse) {
+                    const message = error.error?.message ?? 'خطا در ویرایش پرسش';
+                    this.showError(message);
+                }
+
+                this.loadData(this.courseId!, this.exam!.id);
+            },
+        });
     }
 
     private updateOptionOrders(question: QuestionInfo) {

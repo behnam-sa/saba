@@ -71,6 +71,7 @@ namespace Saba.Api.Controllers
                     {
                         Id = q.Id,
                         Text = q.Text,
+                        CorrectOption = q.CorrectOption,
                         Options = q.Options.OrderBy(o => o.Order).Select(o => new OptionInfo
                         {
                             Id = o.Id,
