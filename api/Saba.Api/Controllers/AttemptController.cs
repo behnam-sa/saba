@@ -70,6 +70,7 @@ namespace Saba.Api.Controllers
                             SelectedOption = q.Answers.Any(a => a.Attempt.TakerId == User.Identity.Name)
                                 ? q.Answers.Single(a => a.Attempt.TakerId == User.Identity.Name).SelectedOption
                                 : null,
+                            CorrectOption = r.Attempt != null && r.Attempt.IsFinished ? q.CorrectOption : null,
                         }),
                 })
                 .SingleOrDefaultAsync();

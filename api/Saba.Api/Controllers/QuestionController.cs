@@ -37,6 +37,7 @@ namespace Saba.Api.Controllers
             }
 
             question.Text = edit.Text;
+            question.CorrectOption = edit.CorrectOption;
             context.Entry(question).State = EntityState.Modified;
 
             try
@@ -90,7 +91,7 @@ namespace Saba.Api.Controllers
 
         // DELETE: api/Exam/5
         [HttpDelete("{questionId:int}")]
-        public async Task<IActionResult> DeleteQuestion(int courseId, int examId, int questionId)
+        public async Task<IActionResult> Delete(int courseId, int examId, int questionId)
         {
             var exam = await context.Courses
                 .Include(c => c.Exams)

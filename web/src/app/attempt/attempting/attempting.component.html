@@ -17,7 +17,6 @@
     <mat-accordion>
         <mat-expansion-panel
             *ngFor="let answer of attempt.answers; let index = index; trackBy: identify"
-            cdkDrag
             [expanded]="currectQuestionIndex === index"
             (opened)="currectQuestionIndex = index"
         >

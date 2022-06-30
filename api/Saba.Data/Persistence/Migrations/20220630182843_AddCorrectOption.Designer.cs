@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Saba.Data.Persistence;
 
@@ -11,9 +12,10 @@ using Saba.Data.Persistence;
 namespace Saba.Data.Persistence.Migrations
 {
     [DbContext(typeof(SabaDbContext))]
-    partial class SabaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220630182843_AddCorrectOption")]
+    partial class AddCorrectOption
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

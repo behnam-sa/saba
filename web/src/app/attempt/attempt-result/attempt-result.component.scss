@@ -16,6 +16,11 @@
     gap: theme.$density-normal;
 }
 
+.result-score {
+    display: flex;
+    gap: theme.$density-large;
+}
+
 .warn-text {
     color: theme.mat-color(theme.$warn-palette, text);
 
@@ -24,7 +29,10 @@
     }
 }
 
-.normal-color {
+.option-content {
+    display: flex;
+    align-items: center;
+    gap: theme.$density-small;
     color: theme.mat-color(theme.$foreground-palette, text);
 }
 
@@ -33,4 +41,16 @@
     flex-direction: column;
     align-items: flex-start;
     gap: theme.$density-normal;
+}
+
+.positive {
+    color: theme.mat-color(theme.$primary-palette);
+}
+
+.neutral {
+    color: theme.mat-color(theme.$foreground-palette, secondary-text);
+}
+
+.negative {
+    color: theme.mat-color(theme.$warn-palette);
 }

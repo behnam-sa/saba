@@ -4,6 +4,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
+import { AuthTokenService } from 'src/app/authentication/services/auth-token.service';
 import { CourseService } from '../services/course.service';
 import { CourseDetailsComponent } from './course-details.component';
 
@@ -16,6 +17,7 @@ describe('CourseDetailsComponent', () => {
             declarations: [CourseDetailsComponent],
             providers: [
                 { provide: CourseService, useValue: {} },
+                { provide: AuthTokenService, useValue: {} },
                 { provide: ActivatedRoute, useValue: { paramMap: of(convertToParamMap({ id: 2 })) } },
             ],
             imports: [RouterTestingModule, MatSnackBarModule, MatDialogModule],

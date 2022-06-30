@@ -57,6 +57,15 @@ export class AttemptResultComponent implements OnInit, OnDestroy {
         });
     }
 
+    public get score(): number {
+        return this.attempt!.answers.filter((a) => a.correctOption !== null && a.correctOption === a.selectedOption)
+            .length;
+    }
+
+    public get totalScore(): number {
+        return this.attempt!.answers.filter((a) => a.correctOption !== null).length;
+    }
+
     public identify(index: number, item: { id: number }) {
         return item.id;
     }

@@ -10,6 +10,8 @@ namespace Saba.Data.Models
 
         public int Order { get; set; }
 
+        public int? CorrectOption { get; set; }
+
         public ICollection<Option> Options { get; set; }
 
         public virtual Exam Exam { get; set; }

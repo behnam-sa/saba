@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AuthTokenService } from 'src/app/authentication/services/auth-token.service';
 import { DeleteCourseDialogComponent } from '../delete-course-dialog/delete-course-dialog.component';
 import { CourseDetails } from '../models/course-details';
 import { CourseService } from '../services/course.service';
@@ -18,6 +19,7 @@ export class CourseDetailsComponent implements OnInit {
 
     constructor(
         private courseService: CourseService,
+        private authTokenService: AuthTokenService,
         private route: ActivatedRoute,
         private router: Router,
         private snackBar: MatSnackBar,
@@ -44,6 +46,11 @@ export class CourseDetailsComponent implements OnInit {
     }
 
     public attend() {
+        if (!this.authTokenService.isLoggedIn) {
+            this.router.navigate(['/account/login']);
+            return;
+        }
+
         this.changingAttendance = true;
         this.courseService.attendCourse(this.course!.id).subscribe({
             next: () => {

@@ -33,9 +33,18 @@
     flex-direction: column;
 }
 
+.oprion-prefix {
+    display: flex;
+    align-items: center;
+    margin-left: theme.$density-small;
+}
+
+.question-drag-handle {
+    margin-left: theme.$density-small;
+}
+
 .drag-handle {
     color: theme.mat-color(theme.$foreground-palette, secondary-text);
-    margin-left: theme.$density-small;
     cursor: move;
 }
 

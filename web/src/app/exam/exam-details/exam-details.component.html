@@ -29,7 +29,7 @@
         <mat-expansion-panel *ngFor="let question of exam.questions; let index = index; trackBy: identify" cdkDrag>
             <mat-expansion-panel-header>
                 <mat-panel-title>
-                    <mat-icon cdkDragHandle class="drag-handle">drag_handle</mat-icon>
+                    <mat-icon cdkDragHandle class="question-drag-handle drag-handle">drag_handle</mat-icon>
                     <b>{{ (index + 1).toLocaleString('fa-IR') }}.</b>
                     &nbsp;
                     {{ question.text }}
@@ -42,7 +42,7 @@
                     matInput
                     type="text"
                     [value]="question.text"
-                    (change)="editQuestion(question, $event)"
+                    (change)="editQuestionText(question, $event)"
                     cdkTextareaAutosize
                     [cdkAutosizeMaxRows]="10"
                 ></textarea>
@@ -68,8 +68,26 @@
                     cdkDrag
                 >
                     <mat-label>گزینه {{ (optionIndex + 1).toLocaleString('fa-IR') }}</mat-label>
-                    <span matPrefix>
+                    <span matPrefix class="oprion-prefix">
                         <mat-icon cdkDragHandle class="drag-handle">drag_handle</mat-icon>
+
+                        <button
+                            *ngIf="question.correctOption === optionIndex"
+                            mat-icon-button
+                            color="primary"
+                            matTooltip="پاسخ درست"
+                            (click)="setAnswer(question, null)"
+                        >
+                            <mat-icon>check_circle</mat-icon>
+                        </button>
+                        <button
+                            *ngIf="question.correctOption !== optionIndex"
+                            mat-icon-button
+                            matTooltip="قرار دادن به عنوان پاسخ درست"
+                            (click)="setAnswer(question, optionIndex)"
+                        >
+                            <mat-icon>radio_button_unchecked</mat-icon>
+                        </button>
                     </span>
 
                     <textarea
